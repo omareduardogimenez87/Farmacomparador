@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Farmacomparador</title>
+<meta name="description" content="Compará precios entre farmacias online">
+<meta name="theme-color" content="#0f6b5c">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/icono.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/icono.svg">
+<style>
+  :root {
+    --fondo: #f3f5f4; --tarjeta: #ffffff; --texto: #17211e; --suave: #5d6b66; --borde: #dde3e0;
+    --marca: #0f6b5c; --marca-texto: #ffffff; --ahorro: #0a7a3d; --ahorro-fondo: #e2f5e9; --error: #b3261e;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --fondo: #111715; --tarjeta: #1b2421; --texto: #e8eeeb; --suave: #9aa9a3; --borde: #2c3834;
+      --marca: #2aa58f; --marca-texto: #06201b; --ahorro: #6fdc9a; --ahorro-fondo: #143524; --error: #ff8a80;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--fondo); color: var(--texto);
+    font: 16px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  header {
+    position: sticky; top: 0; z-index: 2; background: var(--fondo);
+    padding: calc(12px + env(safe-area-inset-top)) 16px 10px; border-bottom: 1px solid var(--borde);
+  }
+  main, header > * { max-width: 640px; margin-left: auto; margin-right: auto; }
+  h1 { font-size: 1.15rem; margin: 0 0 10px; color: var(--marca); }
+  form { display: flex; gap: 8px; }
+  input[type=search] {
+    flex: 1; min-width: 0; padding: 12px 14px; font-size: 16px; color: var(--texto);
+    background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 12px;
+  }
+  button {
+    padding: 12px 18px; font-size: 16px; font-weight: 600; border: 0; border-radius: 12px;
+    background: var(--marca); color: var(--marca-texto);
+  }
+  button:disabled { opacity: .6; }
+  main { padding: 12px 16px calc(32px + env(safe-area-inset-bottom)); }
+  .sitios { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+  .sitio { font-size: .8rem; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--borde); color: var(--suave); }
+  .sitio.fallo { color: var(--error); border-color: var(--error); }
+  .filtro { display: flex; align-items: center; gap: 8px; margin: 4px 0 12px; font-size: .9rem; color: var(--suave); }
+  .filtro input { width: 20px; height: 20px; accent-color: var(--marca); }
+  .mensaje { text-align: center; color: var(--suave); padding: 36px 8px; }
+  .producto { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 14px; padding: 12px; margin-bottom: 12px; }
+  .cabecera { display: flex; gap: 12px; align-items: center; margin-bottom: 8px; }
+  .cabecera img { width: 56px; height: 56px; object-fit: contain; border-radius: 8px; background: #fff; flex: none; }
+  .cabecera h2 { font-size: 1rem; margin: 0; overflow-wrap: anywhere; }
+  .cabecera small { color: var(--suave); }
+  .oferta {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    padding: 10px 2px; border-top: 1px solid var(--borde); color: inherit; text-decoration: none;
+  }
+  .oferta .tienda { font-weight: 600; }
+  .oferta .detalle { display: block; font-size: .78rem; font-weight: 400; color: var(--suave); }
+  .oferta .precios { text-align: right; white-space: nowrap; }
+  .oferta .precio { font-size: 1.1rem; font-weight: 700; }
+  .oferta .lista { display: block; font-size: .78rem; color: var(--suave); text-decoration: line-through; }
+  .oferta.mejor .precio { color: var(--ahorro); }
+  .oferta.agotado { opacity: .55; }
+  .etiqueta { display: inline-block; font-size: .7rem; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: var(--ahorro-fondo); color: var(--ahorro); margin-left: 6px; }
+  .ahorro { margin: 8px 0 0; padding: 8px 10px; border-radius: 10px; font-size: .88rem; background: var(--ahorro-fondo); color: var(--ahorro); }
+  footer { color: var(--suave); font-size: .78rem; text-align: center; margin-top: 20px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Farmacomparador</h1>
+  <form id="formulario" role="search">
+    <input id="consulta" type="search" placeholder="Ej: actron 400, protector solar…" aria-label="Producto a buscar" autocomplete="off" enterkeyhint="search" required minlength="3" maxlength="80">
+    <button id="boton" type="submit">Buscar</button>
+  </form>
+</header>
+<main>
+  <div id="sitios" class="sitios"></div>
+  <label id="filtro" class="filtro" hidden><input id="soloComparables" type="checkbox"> Mostrar solo productos que están en 2 o más tiendas</label>
+  <div id="resultados"><p class="mensaje">Escribí un producto y te muestro el precio en cada tienda.</p></div>
+  <footer>Los precios son los publicados en la web de cada tienda al momento de buscar. Pueden no incluir promociones bancarias, de obra social ni del tipo 2x1.</footer>
+</main>
+<script>
+  const pesos = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 });
+  const $ = (id) => document.getElementById(id);
+  let ultimo = null;
+
+  // Crea un elemento de la página. El texto siempre se inserta como texto,
+  // nunca como HTML, para que nada de lo que venga de otro sitio pueda ejecutarse.
+  function crear(etiqueta, clase, texto) {
+    const elemento = document.createElement(etiqueta);
+    if (clase) elemento.className = clase;
+    if (texto != null) elemento.textContent = texto;
+    return elemento;
+  }
+
+  function mensaje(texto) {
+    $('resultados').replaceChildren(crear('p', 'mensaje', texto));
+  }
+
+  function tarjeta(grupo, nombres) {
+    const caja = crear('article', 'producto');
+    const cabecera = crear('div', 'cabecera');
+    if (grupo.imagen && grupo.imagen.startsWith('https://')) {
+      const foto = crear('img');
+      foto.src = grupo.imagen; foto.alt = ''; foto.loading = 'lazy';
+      foto.onerror = () => foto.remove();
+      cabecera.append(foto);
+    }
+    const titulos = crear('div');
+    titulos.append(crear('h2', null, grupo.nombre));
+    if (grupo.marca) titulos.append(crear('small', null, grupo.marca));
+    cabecera.append(titulos);
+    caja.append(cabecera);
+
+    const conStock = grupo.ofertas.filter((oferta) => oferta.stock);
+    grupo.ofertas.forEach((oferta, i) => {
+      const esMejor = oferta.stock && i === 0 && conStock.length > 1 && conStock[1].precio > oferta.precio;
+      const fila = crear('a', 'oferta' + (esMejor ? ' mejor' : '') + (oferta.stock ? '' : ' agotado'));
+      fila.href = oferta.url; fila.target = '_blank'; fila.rel = 'noopener';
+
+      const tienda = crear('span', 'tienda', nombres[oferta.sitio] || oferta.sitio);
+      if (esMejor) tienda.append(crear('span', 'etiqueta', 'Más barato'));
+      // Si el nombre difiere entre tiendas, se muestra para que puedas verificar que es lo mismo.
+      const detalle = !oferta.stock ? 'Sin stock' : oferta.nombre !== grupo.nombre ? oferta.nombre : '';
+      if (detalle) tienda.append(crear('span', 'detalle', detalle));
+
+      const precios = crear('span', 'precios');
+      precios.append(crear('span', 'precio', (oferta.desde ? 'desde ' : '') + pesos.format(oferta.precio)));
+      if (oferta.precioLista > oferta.precio) precios.append(crear('span', 'lista', pesos.format(oferta.precioLista)));
+      fila.append(tienda, precios);
+      caja.append(fila);
+    });
+
+    if (conStock.length > 1) {
+      const diferencia = conStock[conStock.length - 1].precio - conStock[0].precio;
+      if (diferencia > 0) {
+        const porcentaje = Math.round((diferencia / conStock[conStock.length - 1].precio) * 100);
+        caja.append(crear('p', 'ahorro', `Ahorrás ${pesos.format(diferencia)} (${porcentaje}%) comprando en ${nombres[conStock[0].sitio]}.`));
+      } else {
+        caja.append(crear('p', 'ahorro', 'Mismo precio en todas las tiendas que lo tienen.'));
+      }
+    }
+    return caja;
+  }
+
+  function mostrar() {
+    if (!ultimo) return;
+    const nombres = Object.fromEntries(ultimo.sitios.map((s) => [s.id, s.nombre]));
+    $('sitios').replaceChildren(...ultimo.sitios.map((s) =>
+      crear('span', 'sitio' + (s.ok ? '' : ' fallo'), s.ok ? `${s.nombre}: ${s.cantidad}` : `${s.nombre}: no respondió`)));
+
+    const comparables = ultimo.grupos.filter((g) => g.ofertas.length > 1);
+    $('filtro').hidden = comparables.length === 0 || comparables.length === ultimo.grupos.length;
+    const grupos = $('soloComparables').checked && !$('filtro').hidden ? comparables : ultimo.grupos;
+
+    if (!grupos.length) {
+      mensaje(ultimo.sitios.some((s) => !s.ok)
+        ? 'No encontré resultados, y algunas tiendas no respondieron. Probá de nuevo en un rato.'
+        : 'No encontré ese producto en ninguna tienda. Probá con menos palabras o con la marca.');
+      return;
+    }
+    $('resultados').replaceChildren(...grupos.map((g) => tarjeta(g, nombres)));
+  }
+
+  async function buscar(consulta) {
+    $('boton').disabled = true;
+    $('sitios').replaceChildren();
+    $('filtro').hidden = true;
+    mensaje('Consultando las tiendas…');
+    try {
+      const respuesta = await fetch('/api/buscar?q=' + encodeURIComponent(consulta));
+      const datos = await respuesta.json();
+      if (!respuesta.ok) throw new Error(datos.error);
+      ultimo = datos;
+      mostrar();
+    } catch (error) {
+      ultimo = null;
+      mensaje(error.message && !/fetch|JSON/i.test(error.message) ? error.message : 'No se pudo buscar. Revisá tu conexión y probá de nuevo.');
+    } finally {
+      $('boton').disabled = false;
+    }
+  }
+
+  $('formulario').addEventListener('submit', (evento) => {
+    evento.preventDefault();
+    const consulta = $('consulta').value.trim();
+    if (consulta.length < 3) return;
+    $('consulta').blur();
+    history.replaceState(null, '', '?q=' + encodeURIComponent(consulta));
+    buscar(consulta);
+  });
+  $('soloComparables').addEventListener('change', mostrar);
+
+  // Permite compartir una búsqueda por link: /?q=actron
+  const inicial = new URLSearchParams(location.search).get('q');
+  if (inicial && inicial.trim().length >= 3) { $('consulta').value = inicial.trim(); buscar(inicial.trim()); }
+</script>
+</body>
+</html>

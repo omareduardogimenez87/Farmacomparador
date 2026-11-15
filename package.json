@@ -1,0 +1,14 @@
+{
+  "name": "farmacomparador",
+  "version": "1.0.0",
+  "description": "Comparador de precios entre farmacias online",
+  "private": true,
+  "license": "SEE LICENSE IN LICENSE",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test"
+  }
+}
