@@ -1,6 +1,6 @@
 {
-  "name": "Farmacomparador",
-  "short_name": "Farmacomp",
+  "name": "Seco y furioso",
+  "short_name": "Seco y furioso",
   "description": "Compará precios entre farmacias y supermercados online",
   "start_url": "/",
   "display": "standalone",

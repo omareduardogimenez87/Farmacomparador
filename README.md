@@ -1,4 +1,6 @@
-# Farmacomparador
+# Seco y furioso
+
+(Antes se llamaba Farmacomparador. El repositorio, el proyecto de Vercel y la dirección web conservan ese nombre.)
 
 App para el celular que busca un producto y muestra el precio en varias farmacias y supermercados online a la vez.
 
@@ -14,7 +16,8 @@ App para el celular que busca un producto y muestra el precio en varias farmacia
 | MásOnline | Funciona | Sí |
 | Vea | Funciona | Sí |
 | La Anónima | Funciona | No |
-| Diarco | No incluida: su web no publica precios | — |
+| Las Mil Novedades | Funciona (bazar, juguetería, librería, cotillón, electrónica). Precios mayoristas: la compra online mínima es de $80.000 | En muchos productos |
+| Diarco | No incluida: su web no publica precios, y sus ofertas son folletos en imagen | — |
 | Farmar | No incluida: su buscador exige una credencial de acceso | — |
 | L'Oréal Paris | No incluida: el sitio no publica precios | — |
 
@@ -26,6 +29,26 @@ App para el celular que busca un producto y muestra el precio en varias farmacia
 - Tocando la etiqueta de una tienda se ven solo sus productos.
 - MásOnline, Vea y La Anónima pueden tener precios distintos según la sucursal o la zona. La app muestra el precio que cada sitio muestra por defecto, sin elegir sucursal.
 - Los precios son los publicados en la web. No incluyen promociones bancarias, de obra social ni del tipo 2x1 o "segunda unidad".
+
+## Funciones
+
+- **Buscar** por nombre, o por **código de barras** (escribiendo los números o con la cámara).
+- **Micrófono**: buscar o preguntar hablando. Usa el reconocimiento de voz del navegador, sin costo.
+- **Cámara**: se saca una foto del producto. Si se ve el código de barras, el celular lo lee al instante (Chrome en Android). Si no, la IA reconoce el producto en la foto.
+- **Asistente**: un chat con la IA de Claude que consulta las tiendas y responde, por escrito o en voz alta.
+- **Logos** de cada tienda, descargados de su propio sitio y guardados en `public/logos/`.
+
+## Activar la inteligencia artificial
+
+El asistente y el reconocimiento por foto usan la API de Claude, que se paga aparte de la suscripción a Claude (es una cuenta distinta, en console.anthropic.com). Sin configurarla, el resto de la app funciona igual.
+
+1. Crear una clave de API en https://console.anthropic.com (Settings → API Keys) y cargar saldo. Conviene fijar un límite de gasto mensual.
+2. En Vercel: proyecto `farmacomparador` → **Settings → Environment Variables**, agregar:
+   - `ANTHROPIC_API_KEY`: la clave de API.
+   - `CLAVE_IA`: una clave inventada para la familia. La app la pide la primera vez que se usa la IA en cada celular. Sin ella, la IA queda apagada para que nadie con el enlace gaste el saldo.
+3. Volver a publicar (**Deployments → … → Redeploy**).
+
+Usa el modelo Claude Opus 5.5 con esfuerzo bajo. Si el modelo rechaza una consulta, la API la reintenta sola con el modelo de respaldo recomendado.
 
 ## Probarla en la computadora
 
@@ -54,6 +77,8 @@ La app necesita un servidor: el navegador del celular no puede consultar directa
 - `public/index.html`: la pantalla que se ve en el celular.
 - `api/buscar.js`: recibe la búsqueda de la pantalla y devuelve los resultados.
 - `lib/sitios.js`: un bloque por tienda, que sabe cómo consultarla. Para sumar una tienda se agrega acá.
-- `lib/comparar.js`: filtra resultados que no corresponden y agrupa por código de barras.
+- `lib/comparar.js`: filtra resultados que no corresponden, agrupa por código de barras y busca por código.
+- `lib/ia.js`: el asistente y el reconocimiento de fotos con Claude.
+- `api/chat.js` y `api/foto.js`: reciben los pedidos de la IA desde la pantalla.
 - `server.js`: servidor para probar en la computadora.
 - `test/`: pruebas automáticas.
