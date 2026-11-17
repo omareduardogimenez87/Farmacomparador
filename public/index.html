@@ -75,11 +75,6 @@
   .ahorro { margin: 8px 0 0; padding: 8px 10px; border-radius: 10px; font-size: .88rem; background: var(--ahorro-fondo); color: var(--ahorro); }
   footer { color: var(--suave); font-size: .78rem; text-align: center; margin-top: 20px; }
 
-  /* Pestañas */
-  .pestanas { display: flex; gap: 6px; margin: 0 0 10px; }
-  .pestanas button { flex: 1; padding: 9px 10px; font-size: .95rem; background: transparent; color: var(--suave); border: 1px solid var(--borde); }
-  .pestanas button[aria-selected=true] { background: var(--marca); color: var(--marca-texto); border-color: var(--marca); }
-
   /* Botones con ícono (micrófono, cámara, enviar) */
   .icono { flex: none; width: 46px; height: 46px; padding: 0; display: grid; place-items: center; background: var(--tarjeta); color: var(--marca); border: 1px solid var(--borde); }
   .icono svg { width: 22px; height: 22px; }
@@ -92,68 +87,31 @@
   .oferta .tienda .logo { margin-right: 6px; vertical-align: -4px; }
   .aviso { margin: 0 0 10px; padding: 8px 10px; border-radius: 10px; font-size: .88rem; background: var(--tarjeta); border: 1px solid var(--borde); }
 
-  /* Asistente */
-  #vistaAsistente { display: flex; flex-direction: column; gap: 10px; }
-  .chat { display: flex; flex-direction: column; gap: 10px; }
-  .burbuja { max-width: 88%; padding: 10px 12px; border-radius: 14px; white-space: pre-wrap; overflow-wrap: anywhere; }
-  .burbuja.usuario { align-self: flex-end; background: var(--marca); color: var(--marca-texto); border-bottom-right-radius: 4px; }
-  .burbuja.asistente { align-self: flex-start; background: var(--tarjeta); border: 1px solid var(--borde); border-bottom-left-radius: 4px; }
-  .burbuja.error { border-color: var(--error); color: var(--error); }
-  .busquedas { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
-  .busquedas button { padding: 4px 10px; font-size: .78rem; font-weight: 400; background: transparent; color: var(--marca); border: 1px solid var(--borde); border-radius: 999px; }
-  .escribir { position: sticky; bottom: 0; display: flex; gap: 8px; padding: 10px 0 calc(10px + env(safe-area-inset-bottom)); background: var(--fondo); }
-  .escribir textarea {
-    flex: 1; min-width: 0; resize: none; padding: 12px 14px; font: inherit; color: var(--texto);
-    background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 12px; max-height: 120px;
-  }
-  .opcion { display: flex; align-items: center; gap: 8px; font-size: .88rem; color: var(--suave); }
-  .opcion input { width: 20px; height: 20px; accent-color: var(--marca); }
   /* Marca de agua al pie de la página */
   .firma {
     margin: 8px 0 0; padding: 4px 16px calc(16px + env(safe-area-inset-bottom)); text-align: center;
     font-size: 1.05rem; font-weight: 700; letter-spacing: .12em; color: var(--suave); opacity: .45; user-select: none;
   }
-  .clave { display: flex; gap: 8px; }
-  .clave input { flex: 1; min-width: 0; padding: 10px 12px; font: inherit; color: var(--texto); background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 10px; }
 </style>
 </head>
 <body>
 <header>
   <h1>Seco y furioso</h1>
-  <div class="pestanas" role="tablist">
-    <button id="pestanaBuscar" type="button" role="tab" aria-selected="true" aria-controls="vistaBuscar">Buscar</button>
-    <button id="pestanaAsistente" type="button" role="tab" aria-selected="false" aria-controls="vistaAsistente">Asistente</button>
-  </div>
   <form id="formulario" role="search">
     <input id="consulta" type="search" placeholder="Producto o código de barras" aria-label="Producto a buscar" autocomplete="off" enterkeyhint="search" required minlength="3" maxlength="80">
     <button id="microfono" class="icono" type="button" aria-label="Buscar hablando" hidden></button>
-    <button id="camara" class="icono" type="button" aria-label="Escanear o fotografiar un producto"></button>
+    <button id="camara" class="icono" type="button" aria-label="Escanear el código de barras"></button>
     <button id="boton" type="submit">Buscar</button>
   </form>
   <input id="archivoFoto" type="file" accept="image/*" capture="environment" hidden>
 </header>
-<main id="vistaBuscar" role="tabpanel">
+<main id="vistaBuscar">
   <p id="aviso" class="aviso" hidden></p>
   <div id="sitios" class="sitios"></div>
   <p id="ayuda" class="ayuda" hidden>Tocá una tienda para ver solo sus productos.</p>
   <label id="filtro" class="filtro" hidden><input id="soloComparables" type="checkbox"> Mostrar solo productos que están en 2 o más tiendas</label>
   <div id="resultados"><p class="mensaje">Escribí un producto y te muestro el precio en cada tienda.</p></div>
   <footer>Los precios son los publicados en la web de cada tienda al momento de buscar. Pueden no incluir promociones bancarias, de obra social ni del tipo 2x1. Los logos pertenecen a cada tienda.</footer>
-</main>
-<main id="vistaAsistente" role="tabpanel" hidden>
-  <div id="chat" class="chat">
-    <div class="burbuja asistente">¡Hola! Preguntame por precios, por ejemplo: "¿Dónde está más barata la yerba Playadito de 1 kilo?". Podés escribir o tocar el micrófono y hablar.</div>
-  </div>
-  <form id="formClave" class="clave" hidden>
-    <input id="clave" type="password" placeholder="Clave del asistente" aria-label="Clave del asistente" autocomplete="current-password">
-    <button type="submit">Guardar</button>
-  </form>
-  <label class="opcion"><input id="leerEnVoz" type="checkbox"> Leer las respuestas en voz alta</label>
-  <form id="formChat" class="escribir">
-    <textarea id="pregunta" rows="1" placeholder="Escribí tu pregunta" aria-label="Pregunta para el asistente" maxlength="2000" enterkeyhint="send"></textarea>
-    <button id="microfonoChat" class="icono" type="button" aria-label="Preguntar hablando" hidden></button>
-    <button id="enviar" class="icono" type="submit" aria-label="Enviar"></button>
-  </form>
 </main>
 <p class="firma" aria-label="Hecho por EduApp">EduApp</p>
 <script>
@@ -310,26 +268,10 @@
   const ICONOS = {
     microfono: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 17v5M8 22h8"/></svg>',
     camara: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13.5" r="3.5"/></svg>',
-    enviar: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l16-8-6 16-2-7-8-1z"/></svg>',
   };
   // Los íconos son fijos, escritos acá: no viene nada de afuera.
   $('microfono').innerHTML = ICONOS.microfono;
-  $('microfonoChat').innerHTML = ICONOS.microfono;
   $('camara').innerHTML = ICONOS.camara;
-  $('enviar').innerHTML = ICONOS.enviar;
-
-  // ---------- Pestañas ----------
-  function elegirPestana(cual) {
-    const asistente = cual === 'asistente';
-    $('pestanaBuscar').setAttribute('aria-selected', String(!asistente));
-    $('pestanaAsistente').setAttribute('aria-selected', String(asistente));
-    $('vistaBuscar').hidden = asistente;
-    $('vistaAsistente').hidden = !asistente;
-    $('formulario').hidden = asistente;
-    if (asistente) $('pregunta').focus();
-  }
-  $('pestanaBuscar').addEventListener('click', () => elegirPestana('buscar'));
-  $('pestanaAsistente').addEventListener('click', () => elegirPestana('asistente'));
 
   // ---------- Hablarle a la app (reconocimiento de voz del navegador) ----------
   const Reconocimiento = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -348,84 +290,45 @@
   }
   if (Reconocimiento) {
     $('microfono').hidden = false;
-    $('microfonoChat').hidden = false;
     $('microfono').addEventListener('click', () => escuchar($('microfono'), (texto) => {
       $('consulta').value = texto;
       if (texto.length >= 3) $('formulario').requestSubmit();
     }));
-    $('microfonoChat').addEventListener('click', () => escuchar($('microfonoChat'), (texto) => {
-      $('pregunta').value = texto;
-      if (texto) $('formChat').requestSubmit();
-    }));
   }
 
-  // ---------- Clave del asistente ----------
-  function leerClave() {
-    try { return localStorage.getItem('claveIa') || ''; } catch { return ''; }
-  }
-  function guardarClave(valor) {
-    try { localStorage.setItem('claveIa', valor); } catch { /* sin almacenamiento: se pide de nuevo */ }
-    claveEnMemoria = valor;
-  }
-  let claveEnMemoria = leerClave();
-
-  async function llamarIa(ruta, cuerpo) {
-    const respuesta = await fetch(ruta, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Clave': claveEnMemoria },
-      body: JSON.stringify(cuerpo),
-    });
-    const datos = await respuesta.json().catch(() => ({ error: 'El asistente no respondió. Probá de nuevo.' }));
-    if (respuesta.status === 401) {
-      $('formClave').hidden = false;
-      elegirPestana('asistente');
-      $('clave').focus();
-      const error = new Error('Para usar la inteligencia artificial, escribí la clave del asistente acá abajo y tocá Guardar.');
-      error.sinClave = true;
-      throw error;
-    }
-    if (!respuesta.ok || datos.error) throw new Error(datos.error || 'El asistente no respondió. Probá de nuevo.');
-    return datos;
-  }
-  $('formClave').addEventListener('submit', (evento) => {
-    evento.preventDefault();
-    guardarClave($('clave').value.trim());
-    $('clave').value = '';
-    $('formClave').hidden = true;
-  });
-
-  // ---------- Escanear el código de barras o reconocer el producto con una foto ----------
+  // ---------- Escanear el código de barras ----------
+  // Lo lee el propio celular, sin enviar la foto a ningún lado y sin costo.
+  // Hoy funciona en Chrome con Android; donde el navegador no puede, el botón no aparece.
   const FORMATOS = ['ean_13', 'ean_8', 'upc_a', 'upc_e'];
-  async function leerCodigo(imagen) {
-    if (!('BarcodeDetector' in window)) return null;
+  let formatosDisponibles = [];
+
+  async function prepararEscaner() {
+    if (!('BarcodeDetector' in window)) return;
     try {
       const disponibles = await BarcodeDetector.getSupportedFormats();
-      const formatos = FORMATOS.filter((f) => disponibles.includes(f));
-      if (!formatos.length) return null;
-      const codigos = await new BarcodeDetector({ formats: formatos }).detect(imagen);
-      const valido = codigos.map((c) => c.rawValue).find((v) => /^\d{8,14}$/.test(v));
-      return valido || null;
+      formatosDisponibles = FORMATOS.filter((f) => disponibles.includes(f));
+    } catch {
+      formatosDisponibles = [];
+    }
+    $('camara').hidden = formatosDisponibles.length === 0;
+  }
+
+  async function leerCodigo(imagen) {
+    try {
+      const codigos = await new BarcodeDetector({ formats: formatosDisponibles }).detect(imagen);
+      return codigos.map((c) => c.rawValue).find((v) => /^\d{8,14}$/.test(v)) || null;
     } catch {
       return null;
     }
   }
 
-  // Achica la foto antes de enviarla: menos datos, más rápido y más barato.
-  function fotoComoJpeg(imagen, lado = 1280) {
-    const escala = Math.min(1, lado / Math.max(imagen.width, imagen.height));
-    const lienzo = document.createElement('canvas');
-    lienzo.width = Math.round(imagen.width * escala);
-    lienzo.height = Math.round(imagen.height * escala);
-    lienzo.getContext('2d').drawImage(imagen, 0, 0, lienzo.width, lienzo.height);
-    return lienzo.toDataURL('image/jpeg', 0.85).split(',')[1];
-  }
-
+  $('camara').hidden = true;
+  prepararEscaner();
   $('camara').addEventListener('click', () => $('archivoFoto').click());
   $('archivoFoto').addEventListener('change', async () => {
     const archivo = $('archivoFoto').files[0];
     $('archivoFoto').value = '';
     if (!archivo) return;
-    elegirPestana('buscar');
     $('sitios').replaceChildren();
     aviso('');
     mensaje('Leyendo el código de barras…');
@@ -436,101 +339,13 @@
       mensaje('No pude abrir la foto. Probá de nuevo.');
       return;
     }
-    // 1) Código de barras, leído en el mismo celular (gratis y al instante).
     const codigo = await leerCodigo(imagen);
-    if (codigo) {
-      $('consulta').value = codigo;
-      buscar(codigo);
+    if (!codigo) {
+      mensaje('No pude leer el código de barras. Sacá la foto más cerca, con buena luz y con el código derecho, o escribí el nombre del producto.');
       return;
     }
-    // 2) Si no hay código legible, la IA reconoce el producto en la foto.
-    mensaje('Reconociendo el producto en la foto…');
-    try {
-      const datos = await llamarIa('/api/foto', { imagen: fotoComoJpeg(imagen) });
-      if (!datos.reconocido) {
-        mensaje('No pude reconocer el producto. Probá con una foto más cerca del frente del envase o del código de barras.');
-        return;
-      }
-      const consulta = datos.codigo || datos.busqueda;
-      $('consulta').value = consulta;
-      buscar(consulta, `En la foto reconocí: ${datos.producto}`);
-    } catch (error) {
-      mensaje(error.sinClave ? 'Falta la clave del asistente: cargala en la pestaña Asistente y volvé a sacar la foto.' : error.message);
-      if (error.sinClave) burbuja('asistente', error.message);
-    }
-  });
-
-  // ---------- Asistente ----------
-  const historial = [];
-  let leyendo = false;
-
-  function burbuja(rol, texto, extra) {
-    const caja = crear('div', `burbuja ${rol}` + (extra ? ` ${extra}` : ''), texto);
-    $('chat').append(caja);
-    caja.scrollIntoView({ block: 'end', behavior: 'smooth' });
-    return caja;
-  }
-
-  function leerEnVoz(texto) {
-    if (!$('leerEnVoz').checked || !('speechSynthesis' in window)) return;
-    speechSynthesis.cancel();
-    const voz = new SpeechSynthesisUtterance(texto);
-    voz.lang = 'es-AR';
-    const local = speechSynthesis.getVoices().find((v) => v.lang === 'es-AR') || speechSynthesis.getVoices().find((v) => v.lang.startsWith('es'));
-    if (local) voz.voice = local;
-    speechSynthesis.speak(voz);
-  }
-  try { $('leerEnVoz').checked = localStorage.getItem('leerEnVoz') === 'si'; } catch { /* sin almacenamiento */ }
-  $('leerEnVoz').addEventListener('change', () => {
-    try { localStorage.setItem('leerEnVoz', $('leerEnVoz').checked ? 'si' : 'no'); } catch { /* sin almacenamiento */ }
-    if (!$('leerEnVoz').checked && 'speechSynthesis' in window) speechSynthesis.cancel();
-  });
-
-  $('pregunta').addEventListener('keydown', (evento) => {
-    if (evento.key === 'Enter' && !evento.shiftKey) {
-      evento.preventDefault();
-      $('formChat').requestSubmit();
-    }
-  });
-
-  $('formChat').addEventListener('submit', async (evento) => {
-    evento.preventDefault();
-    const texto = $('pregunta').value.trim();
-    if (!texto || leyendo) return;
-    $('pregunta').value = '';
-    burbuja('usuario', texto);
-    historial.push({ rol: 'usuario', texto });
-    leyendo = true;
-    $('enviar').disabled = true;
-    const espera = burbuja('asistente', 'Buscando precios…');
-    try {
-      const datos = await llamarIa('/api/chat', { historial });
-      espera.textContent = datos.respuesta;
-      historial.push({ rol: 'asistente', texto: datos.respuesta });
-      // Cada búsqueda que hizo la IA se puede abrir en la pestaña Buscar.
-      if (datos.busquedas && datos.busquedas.length) {
-        const lista = crear('div', 'busquedas');
-        for (const consulta of [...new Set(datos.busquedas)]) {
-          const boton = crear('button', null, `Ver "${consulta}"`);
-          boton.type = 'button';
-          boton.addEventListener('click', () => {
-            elegirPestana('buscar');
-            $('consulta').value = consulta;
-            buscar(consulta);
-          });
-          lista.append(boton);
-        }
-        espera.append(lista);
-      }
-      leerEnVoz(datos.respuesta);
-    } catch (error) {
-      espera.textContent = error.message;
-      espera.classList.add('error');
-      historial.pop();
-    } finally {
-      leyendo = false;
-      $('enviar').disabled = false;
-    }
+    $('consulta').value = codigo;
+    buscar(codigo);
   });
 
   // Permite compartir una búsqueda por link: /?q=actron
