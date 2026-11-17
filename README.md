@@ -1,6 +1,6 @@
 # Farmacomparador
 
-App para el celular que busca un producto y muestra el precio en varias tiendas online a la vez.
+App para el celular que busca un producto y muestra el precio en varias farmacias y supermercados online a la vez.
 
 ## Tiendas incluidas
 
@@ -11,6 +11,10 @@ App para el celular que busca un producto y muestra el precio en varias tiendas 
 | Farmalife | Funciona | Sí |
 | Farmaonline | Funciona (no vende medicamentos, sí perfumería y dermocosmética) | Sí |
 | ENA Sport | Funciona | No |
+| MásOnline | Funciona | Sí |
+| Vea | Funciona | Sí |
+| La Anónima | Funciona | No |
+| Diarco | No incluida: su web no publica precios | — |
 | Farmar | No incluida: su buscador exige una credencial de acceso | — |
 | L'Oréal Paris | No incluida: el sitio no publica precios | — |
 
@@ -18,7 +22,9 @@ App para el celular que busca un producto y muestra el precio en varias tiendas 
 
 - Le hace la misma búsqueda a cada tienda al mismo tiempo.
 - Si dos tiendas publican el **mismo código de barras (EAN)**, la app los junta en una sola tarjeta y marca el más barato. Es la única forma confiable de saber que es exactamente el mismo producto.
-- Lo que no se puede emparejar por código (por ejemplo, todo ENA Sport) aparece en una tarjeta propia.
+- Lo que no se puede emparejar por código (por ejemplo, todo ENA Sport y La Anónima) aparece en una tarjeta propia.
+- Tocando la etiqueta de una tienda se ven solo sus productos.
+- MásOnline, Vea y La Anónima pueden tener precios distintos según la sucursal o la zona. La app muestra el precio que cada sitio muestra por defecto, sin elegir sucursal.
 - Los precios son los publicados en la web. No incluyen promociones bancarias, de obra social ni del tipo 2x1 o "segunda unidad".
 
 ## Probarla en la computadora

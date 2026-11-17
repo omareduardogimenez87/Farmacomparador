@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Farmacomparador</title>
-<meta name="description" content="Compará precios entre farmacias online">
+<meta name="description" content="Compará precios entre farmacias y supermercados online">
 <meta name="theme-color" content="#0f6b5c">
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="icon" href="/icono.svg" type="image/svg+xml">
@@ -21,6 +21,7 @@
     }
   }
   * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
   body {
     margin: 0; background: var(--fondo); color: var(--texto);
     font: 16px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
@@ -43,8 +44,13 @@
   button:disabled { opacity: .6; }
   main { padding: 12px 16px calc(32px + env(safe-area-inset-bottom)); }
   .sitios { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
-  .sitio { font-size: .8rem; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--borde); color: var(--suave); }
+  .sitio {
+    font: inherit; font-size: .8rem; font-weight: 400; padding: 6px 12px; border-radius: 999px;
+    border: 1px solid var(--borde); background: transparent; color: var(--suave);
+  }
   .sitio.fallo { color: var(--error); border-color: var(--error); }
+  .sitio[aria-pressed=true] { background: var(--marca); border-color: var(--marca); color: var(--marca-texto); font-weight: 600; }
+  .ayuda { font-size: .78rem; color: var(--suave); margin: 0 0 8px; }
   .filtro { display: flex; align-items: center; gap: 8px; margin: 4px 0 12px; font-size: .9rem; color: var(--suave); }
   .filtro input { width: 20px; height: 20px; accent-color: var(--marca); }
   .mensaje { text-align: center; color: var(--suave); padding: 36px 8px; }
@@ -73,12 +79,13 @@
 <header>
   <h1>Farmacomparador</h1>
   <form id="formulario" role="search">
-    <input id="consulta" type="search" placeholder="Ej: actron 400, protector solar…" aria-label="Producto a buscar" autocomplete="off" enterkeyhint="search" required minlength="3" maxlength="80">
+    <input id="consulta" type="search" placeholder="Ej: actron 400, yerba playadito…" aria-label="Producto a buscar" autocomplete="off" enterkeyhint="search" required minlength="3" maxlength="80">
     <button id="boton" type="submit">Buscar</button>
   </form>
 </header>
 <main>
   <div id="sitios" class="sitios"></div>
+  <p id="ayuda" class="ayuda" hidden>Tocá una tienda para ver solo sus productos.</p>
   <label id="filtro" class="filtro" hidden><input id="soloComparables" type="checkbox"> Mostrar solo productos que están en 2 o más tiendas</label>
   <div id="resultados"><p class="mensaje">Escribí un producto y te muestro el precio en cada tienda.</p></div>
   <footer>Los precios son los publicados en la web de cada tienda al momento de buscar. Pueden no incluir promociones bancarias, de obra social ni del tipo 2x1.</footer>
@@ -87,6 +94,7 @@
   const pesos = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 });
   const $ = (id) => document.getElementById(id);
   let ultimo = null;
+  let tiendaElegida = null;
 
   // Crea un elemento de la página. El texto siempre se inserta como texto,
   // nunca como HTML, para que nada de lo que venga de otro sitio pueda ejecutarse.
@@ -150,12 +158,28 @@
   function mostrar() {
     if (!ultimo) return;
     const nombres = Object.fromEntries(ultimo.sitios.map((s) => [s.id, s.nombre]));
-    $('sitios').replaceChildren(...ultimo.sitios.map((s) =>
-      crear('span', 'sitio' + (s.ok ? '' : ' fallo'), s.ok ? `${s.nombre}: ${s.cantidad}` : `${s.nombre}: no respondió`)));
+    // Cada etiqueta de tienda es un botón: al tocarla se ven solo sus productos.
+    $('sitios').replaceChildren(...ultimo.sitios.map((s) => {
+      const boton = crear('button', 'sitio' + (s.ok ? '' : ' fallo'), s.ok ? `${s.nombre}: ${s.cantidad}` : `${s.nombre}: no respondió`);
+      boton.type = 'button';
+      boton.disabled = !s.ok || s.cantidad === 0;
+      boton.setAttribute('aria-pressed', String(tiendaElegida === s.id));
+      boton.addEventListener('click', () => {
+        tiendaElegida = tiendaElegida === s.id ? null : s.id;
+        mostrar();
+        window.scrollTo({ top: 0 });
+      });
+      return boton;
+    }));
+    $('ayuda').hidden = ultimo.sitios.filter((s) => s.ok && s.cantidad > 0).length < 2;
 
-    const comparables = ultimo.grupos.filter((g) => g.ofertas.length > 1);
-    $('filtro').hidden = comparables.length === 0 || comparables.length === ultimo.grupos.length;
-    const grupos = $('soloComparables').checked && !$('filtro').hidden ? comparables : ultimo.grupos;
+    let grupos = ultimo.grupos;
+    if (tiendaElegida) {
+      grupos = grupos.filter((g) => g.ofertas.some((o) => o.sitio === tiendaElegida));
+    }
+    const comparables = grupos.filter((g) => g.ofertas.length > 1);
+    $('filtro').hidden = comparables.length === 0 || comparables.length === grupos.length;
+    if ($('soloComparables').checked && !$('filtro').hidden) grupos = comparables;
 
     if (!grupos.length) {
       mensaje(ultimo.sitios.some((s) => !s.ok)
@@ -170,6 +194,8 @@
     $('boton').disabled = true;
     $('sitios').replaceChildren();
     $('filtro').hidden = true;
+    $('ayuda').hidden = true;
+    tiendaElegida = null;
     mensaje('Consultando las tiendas…');
     try {
       const respuesta = await fetch('/api/buscar?q=' + encodeURIComponent(consulta));

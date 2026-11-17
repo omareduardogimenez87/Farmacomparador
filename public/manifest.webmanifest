@@ -1,7 +1,7 @@
 {
   "name": "Farmacomparador",
   "short_name": "Farmacomp",
-  "description": "Compará precios entre farmacias online",
+  "description": "Compará precios entre farmacias y supermercados online",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#f3f5f4",
