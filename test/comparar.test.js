@@ -54,3 +54,21 @@ test('un sitio caído no rompe la búsqueda y la oferta sin stock va al final', 
   assert.deepStrictEqual(r.sitios.map((s) => s.ok), [false, true, true]);
   assert.deepStrictEqual(r.grupos[0].ofertas.map((o) => o.sitio), ['b', 'a']);
 });
+
+test('un código de barras busca el producto exacto y lo pone primero', async () => {
+  const yerba = (sitio, ean, precio) => producto(sitio, 'Yerba Mate Suave Playadito 500 g', ean, precio);
+  const r = await comparar('7793704000911', [
+    sitio('a', [yerba('a', '7793704000911', 2690), producto('a', 'Yerba Rosamonte 1 kg', '7790411001514', 4490)]),
+    sitio('b', [yerba('b', '', 2550)]),
+  ]);
+  assert.strictEqual(r.codigo, '7793704000911');
+  assert.strictEqual(r.nombre, 'Yerba Mate Suave Playadito 500 g');
+  assert.strictEqual(r.grupos[0].ean, '7793704000911');
+  assert.ok(r.grupos.every((g) => !/rosamonte/i.test(g.nombre)));
+});
+
+test('un código que ninguna tienda tiene devuelve cero resultados', async () => {
+  const r = await comparar('7790000000017', [sitio('a', [producto('a', 'Otra cosa', '7791111111116', 100)])]);
+  assert.strictEqual(r.grupos.length, 0);
+  assert.strictEqual(r.codigo, '7790000000017');
+});
