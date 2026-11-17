@@ -14,7 +14,8 @@ App para el celular que busca un producto y muestra el precio en varias farmacia
 | MásOnline | Funciona | Sí |
 | Vea | Funciona | Sí |
 | La Anónima | Funciona | No |
-| Diarco | No incluida: su web no publica precios | — |
+| Las Mil Novedades | Funciona (bazar, juguetería, librería, cotillón, electrónica). Precios mayoristas: la compra online mínima es de $80.000 | En muchos productos |
+| Diarco | No incluida: su web no publica precios, y sus ofertas son folletos en imagen | — |
 | Farmar | No incluida: su buscador exige una credencial de acceso | — |
 | L'Oréal Paris | No incluida: el sitio no publica precios | — |
 

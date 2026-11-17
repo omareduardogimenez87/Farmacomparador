@@ -35,6 +35,9 @@ test('con una sola palabra no acepta productos que no la contienen', async () =>
 
 test('no une productos sin código de barras confiable', async () => {
   assert.strictEqual(claveEan('10000914'), null);
+  assert.strictEqual(claveEan('TH-05S'), null);
+  assert.strictEqual(claveEan('2021041330213'), null);
+  assert.strictEqual(claveEan('07799228000574'), '7799228000574');
   const r = await comparar('combo', [
     sitio('a', [producto('a', 'Combo uno', '10000914', 100)]),
     sitio('b', [producto('b', 'Combo dos', '10000914', 200)]),
