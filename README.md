@@ -32,14 +32,23 @@ App para el celular que busca un producto y muestra el precio en varias farmacia
 
 ## Funciones
 
-Todo es gratuito: la app no usa ningún servicio pago.
-
-- **Buscar** por nombre, o por **código de barras** escribiendo los números.
-- **Micrófono**: buscar hablando. Usa el reconocimiento de voz del navegador.
-- **Cámara**: se saca una foto del código de barras y el propio celular lo lee (Chrome en Android). En los navegadores que no pueden leer códigos, el botón no aparece.
+- **Buscar** por nombre, o por **código de barras** (escribiendo los números o con la cámara).
+- **Micrófono**: buscar o preguntar hablando. Usa el reconocimiento de voz del navegador, sin costo.
+- **Cámara**: se saca una foto del producto. Si se ve el código de barras, el celular lo lee al instante (Chrome en Android). Si no, la IA reconoce el producto en la foto.
+- **Asistente**: un chat con la IA de Claude que consulta las tiendas y responde, por escrito o en voz alta.
 - **Logos** de cada tienda, descargados de su propio sitio y guardados en `public/logos/`.
 
-Hubo una versión con asistente de inteligencia artificial (API de Claude). Se quitó para que la app no genere ningún costo; queda en el historial de Git por si algún día se quiere recuperar.
+## Activar la inteligencia artificial
+
+El asistente y el reconocimiento por foto usan la API de Claude, que se paga aparte de la suscripción a Claude (es una cuenta distinta, en console.anthropic.com). Sin configurarla, el resto de la app funciona igual.
+
+1. Crear una clave de API en https://console.anthropic.com (Settings → API Keys) y cargar saldo. Conviene fijar un límite de gasto mensual.
+2. En Vercel: proyecto `farmacomparador` → **Settings → Environment Variables**, agregar:
+   - `ANTHROPIC_API_KEY`: la clave de API.
+   - `CLAVE_IA`: una clave inventada para la familia. La app la pide la primera vez que se usa la IA en cada celular. Sin ella, la IA queda apagada para que nadie con el enlace gaste el saldo.
+3. Volver a publicar (**Deployments → … → Redeploy**).
+
+Usa **Claude Haiku 5.5**, el modelo más económico de Claude, con esfuerzo bajo: US$ 0,10 por millón de tokens enviados y US$ 0,50 por millón de respuesta. Estimación: alrededor de una décima de centavo de dólar por pregunta.
 
 ## Probarla en la computadora
 
@@ -69,5 +78,7 @@ La app necesita un servidor: el navegador del celular no puede consultar directa
 - `api/buscar.js`: recibe la búsqueda de la pantalla y devuelve los resultados.
 - `lib/sitios.js`: un bloque por tienda, que sabe cómo consultarla. Para sumar una tienda se agrega acá.
 - `lib/comparar.js`: filtra resultados que no corresponden, agrupa por código de barras y busca por código.
+- `lib/ia.js`: el asistente y el reconocimiento de fotos con Claude.
+- `api/chat.js` y `api/foto.js`: reciben los pedidos de la IA desde la pantalla.
 - `server.js`: servidor para probar en la computadora.
 - `test/`: pruebas automáticas.
