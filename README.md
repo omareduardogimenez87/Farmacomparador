@@ -1,25 +1,34 @@
-# Precio Pirata
+# Ahorra+Sgo
 
-(Antes se llamó Farmacomparador y Seco y furioso. El repositorio, el proyecto de Vercel y la dirección web conservan ese nombre.)
+Las mejores ofertas están acá.
+
+(Antes se llamó Farmacomparador, Seco y furioso y Precio Pirata. El repositorio, el proyecto de Vercel y la dirección web conservan ese nombre.)
 
 App para el celular que busca un producto y muestra el precio en varias farmacias y supermercados online a la vez.
 
 ## Tiendas incluidas
 
-| Tienda | Estado | Código de barras |
-| --- | --- | --- |
-| Farmacia La Esquina | Funciona | Sí |
-| Farmacity | Funciona | Sí |
-| Farmalife | Funciona | Sí |
-| Farmaonline | Funciona (no vende medicamentos, sí perfumería y dermocosmética) | Sí |
-| ENA Sport | Funciona | No |
-| MásOnline | Funciona | Sí |
-| Vea | Funciona | Sí |
-| La Anónima | Funciona | No |
-| Las Mil Novedades | Funciona (bazar, juguetería, librería, cotillón, electrónica). Precios mayoristas: la compra online mínima es de $80.000 | En muchos productos |
-| Diarco | No incluida: su web no publica precios, y sus ofertas son folletos en imagen | — |
-| Farmar | No incluida: su buscador exige una credencial de acceso | — |
-| L'Oréal Paris | No incluida: el sitio no publica precios | — |
+55 tiendas, agrupadas por rubro. Se puede buscar en todas o en un solo rubro.
+
+| Rubro | Tiendas |
+| --- | --- |
+| Farmacias | La Esquina, Farmacity, Farmalife, Farmaonline |
+| Supermercados | MásOnline, Vea, La Anónima |
+| Deportes y marcas | ENA Sport, Puma, Topper, Fila, Reebok, Under Armour, Saucony, Crocs, Columbia, DC Shoes, Kappa, Decathlon, Atomik, Asics, New Balance, Dexter, Stock Center, Moov, Sporting, Ferreira Sport, Woker, Séptimo Store, New Sport, Fuencarral, Cero26, Mateu Sports, Rossetti, Solo Deportes, Sportline, Marathon, Victoria Deportes, Vandalia, Somos Deportes |
+| Calzado y moda | Grid, Solo Urbano, Paco García, Indonesia Shop, Vallejo Calzados, Aurelius, Go Store, 47 Street, Cuesta Blanca, Mimo & Co, Briganti, Tejano, Burgues, Anation |
+| Bazar y juguetería | Las Mil Novedades (precios mayoristas; compra online mínima de $80.000) |
+
+**No incluidas:**
+
+| Tienda | Motivo |
+| --- | --- |
+| Nike, adidas, Capaccioni | Tienen protección contra programas automáticos (Cloudflare o Akamai) |
+| Grimoldi, Vans, Muni Depot | Usan buscadores propios que la app no puede leer |
+| Diarco | Su web no publica precios, y sus ofertas son folletos en imagen |
+| Farmar | Su buscador exige una credencial de acceso |
+| L'Oréal Paris | El sitio no publica precios |
+
+Las tiendas se consultan por plataforma (`lib/plataformas.js`): VTEX, Shopify, Tiendanube, Magento y Salesforce. Para sumar una tienda de esas plataformas alcanza con agregar una línea en `lib/sitios.js`.
 
 ## Cómo compara
 
@@ -77,7 +86,8 @@ La app necesita un servidor: el navegador del celular no puede consultar directa
 
 - `public/index.html`: la pantalla que se ve en el celular.
 - `api/buscar.js`: recibe la búsqueda de la pantalla y devuelve los resultados.
-- `lib/sitios.js`: un bloque por tienda, que sabe cómo consultarla. Para sumar una tienda se agrega acá.
+- `lib/sitios.js`: la lista de tiendas con su rubro y cómo se consulta cada una.
+- `lib/plataformas.js`: un adaptador por plataforma de comercio electrónico.
 - `lib/promos.js`: lee las promociones bancarias de las tiendas y detecta qué días valen.
 - `lib/comparar.js`: filtra resultados que no corresponden, agrupa por código de barras y busca por código.
 - `lib/ia.js`: el asistente y el reconocimiento de fotos con Claude.

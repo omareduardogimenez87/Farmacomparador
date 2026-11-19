@@ -3,26 +3,26 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Precio Pirata</title>
-<meta name="description" content="Compará precios entre farmacias y supermercados online">
-<meta name="theme-color" content="#c8102e">
+<title>Ahorra+Sgo</title>
+<meta name="description" content="Las mejores ofertas están acá: compará precios entre tiendas online con envío a Santiago del Estero">
+<meta name="theme-color" content="#2968c8">
 <link rel="manifest" href="/manifest.webmanifest">
-<link rel="icon" href="/icono.svg" type="image/svg+xml">
 <link rel="icon" href="/icono-48.png" type="image/png" sizes="48x48">
+<link rel="icon" href="/icono-96.png" type="image/png" sizes="96x96">
 <link rel="apple-touch-icon" href="/icono-180.png">
-<meta name="apple-mobile-web-app-title" content="Precio Pirata">
+<meta name="apple-mobile-web-app-title" content="Ahorra+Sgo">
 <style>
-  /* Colores de la bandera de Santiago del Estero (celeste, blanco, rojo punzó y el sol)
-     y del fuego del Hot Sale. */
+  /* Azul suave como el de las tiendas online más grandes, que combina con el celeste
+     de la bandera de Santiago del Estero. El fuego del Hot Sale queda en los detalles. */
   :root {
     --fondo: #eef5fb; --tarjeta: #ffffff; --texto: #1a1f29; --suave: #566170; --borde: #d6e3ef;
-    --marca: #c8102e; --marca-texto: #ffffff; --ahorro: #0a7a3d; --ahorro-fondo: #e2f5e9; --error: #b3261e;
+    --marca: #2968c8; --marca-texto: #ffffff; --ahorro: #0a7a3d; --ahorro-fondo: #e2f5e9; --error: #b3261e;
     --celeste: #5ba4d9; --sol: #f6b40e; --fuego: #ff6b1a;
   }
   @media (prefers-color-scheme: dark) {
     :root {
       --fondo: #0f1620; --tarjeta: #18222e; --texto: #e9eef4; --suave: #9fb0c2; --borde: #2a3a4c;
-      --marca: #ff5a5f; --marca-texto: #1a0507; --ahorro: #6fdc9a; --ahorro-fondo: #143524; --error: #ff8a80;
+      --marca: #7fb0ff; --marca-texto: #0b1a33; --ahorro: #6fdc9a; --ahorro-fondo: #143524; --error: #ff8a80;
       --celeste: #6fb4e6; --sol: #f6b40e; --fuego: #ff8a3d;
     }
   }
@@ -84,6 +84,9 @@
   .oferta .precio { font-size: 1.1rem; font-weight: 700; }
   .oferta .lista { display: block; font-size: .78rem; color: var(--suave); text-decoration: line-through; }
   .oferta.mejor .precio { color: var(--ahorro); }
+  .oferta .promo-cantidad { display: block; font-size: .78rem; font-weight: 700; color: #b3261e; }
+  .oferta .una-unidad { display: block; font-size: .74rem; color: var(--suave); }
+  @media (prefers-color-scheme: dark) { .oferta .promo-cantidad { color: #ffb38a; } }
   .oferta.agotado { opacity: .55; }
   .etiqueta { display: inline-block; font-size: .7rem; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: var(--ahorro-fondo); color: var(--ahorro); margin-left: 6px; }
   .ahorro { margin: 8px 0 0; padding: 8px 10px; border-radius: 10px; font-size: .88rem; background: var(--ahorro-fondo); color: var(--ahorro); }
@@ -122,6 +125,12 @@
   }
   .opcion { display: flex; align-items: center; gap: 8px; font-size: .88rem; color: var(--suave); }
   .opcion input { width: 20px; height: 20px; accent-color: var(--marca); }
+  /* Rubros y "mostrar más" */
+  .rubros { padding-bottom: 10px; border-bottom: 1px solid var(--borde); margin-bottom: 10px; }
+  .rubros .sitio { font-weight: 600; }
+  .sin-resultados { font-size: .78rem; color: var(--suave); align-self: center; }
+  .mas-resultados { display: block; width: 100%; margin: 4px 0 12px; background: var(--tarjeta); color: var(--marca); border: 1px solid var(--borde); }
+
   /* Promociones */
   .buscador-promos { width: 100%; margin: 0 0 12px; padding: 10px 12px; font: inherit; color: var(--texto); background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 10px; }
   .grupo-promos { margin: 14px 0 8px; font-size: .95rem; color: var(--suave); }
@@ -153,7 +162,7 @@
 </head>
 <body>
 <header>
-  <h1><img class="logo-app" src="/icono.svg" alt="" width="34" height="34">Precio Pirata <span class="beta">Versión de prueba</span></h1>
+  <h1><img class="logo-app" src="/icono-96.png" alt="" width="34" height="34">Ahorra+Sgo <span class="beta">Versión de prueba</span></h1>
   <div class="pestanas" role="tablist">
     <button id="pestanaBuscar" type="button" role="tab" aria-selected="true" aria-controls="vistaBuscar">Buscar</button>
     <button id="pestanaPromos" type="button" role="tab" aria-selected="false" aria-controls="vistaPromos">🔥 Promos</button>
@@ -169,10 +178,12 @@
 </header>
 <main id="vistaBuscar" role="tabpanel">
   <p id="aviso" class="aviso" hidden></p>
+  <div id="rubros" class="sitios rubros" role="group" aria-label="Rubro donde buscar"></div>
   <div id="sitios" class="sitios"></div>
   <p id="ayuda" class="ayuda" hidden>Tocá una tienda para ver solo sus productos.</p>
   <label id="filtro" class="filtro" hidden><input id="soloComparables" type="checkbox"> Mostrar solo productos que están en 2 o más tiendas</label>
-  <div id="resultados"><p class="mensaje">Escribí un producto y te muestro el precio en cada tienda.</p></div>
+  <div id="resultados"><p class="mensaje">Escribí un producto y te muestro el precio en cada tienda. Elegí un rubro para buscar más rápido.</p></div>
+  <button id="masResultados" class="mas-resultados" type="button" hidden>Mostrar más</button>
   <footer>Los precios son los publicados en la web de cada tienda al momento de buscar. Pueden no incluir promociones bancarias, de obra social ni del tipo 2x1. Los logos pertenecen a cada tienda.</footer>
 </main>
 <main id="vistaPromos" role="tabpanel" hidden>
@@ -243,9 +254,11 @@
     cabecera.append(titulos);
     caja.append(cabecera);
 
+    // Precio por unidad que realmente se paga, contando promos como "llevando 2".
+    const final = (oferta) => oferta.precioFinal || oferta.precio;
     const conStock = grupo.ofertas.filter((oferta) => oferta.stock);
     grupo.ofertas.forEach((oferta, i) => {
-      const esMejor = oferta.stock && i === 0 && conStock.length > 1 && conStock[1].precio > oferta.precio;
+      const esMejor = oferta.stock && i === 0 && conStock.length > 1 && final(conStock[1]) > final(oferta);
       const fila = crear('a', 'oferta' + (esMejor ? ' mejor' : '') + (oferta.stock ? '' : ' agotado'));
       fila.href = oferta.url; fila.target = '_blank'; fila.rel = 'noopener';
 
@@ -257,29 +270,76 @@
       if (detalle) tienda.append(crear('span', 'detalle', detalle));
 
       const precios = crear('span', 'precios');
-      precios.append(crear('span', 'precio', (oferta.desde ? 'desde ' : '') + pesos.format(oferta.precio)));
-      if (oferta.precioLista > oferta.precio) precios.append(crear('span', 'lista', pesos.format(oferta.precioLista)));
+      const promo = oferta.promoCantidad && final(oferta) < oferta.precio ? oferta.promoCantidad : null;
+      if (promo) {
+        // Con promo por cantidad, se destaca el precio por unidad llevando varias.
+        precios.append(crear('span', 'precio', pesos.format(final(oferta)) + ' c/u'));
+        precios.append(crear('span', 'promo-cantidad', `🔥 llevando ${promo.unidades}`));
+        precios.append(crear('span', 'una-unidad', `1 unidad: ${pesos.format(oferta.precio)}`));
+      } else {
+        precios.append(crear('span', 'precio', (oferta.desde ? 'desde ' : '') + pesos.format(oferta.precio)));
+        if (oferta.precioLista > oferta.precio) precios.append(crear('span', 'lista', pesos.format(oferta.precioLista)));
+      }
       fila.append(tienda, precios);
       caja.append(fila);
     });
 
+    const mejor = conStock[0];
+    const promoMejor = mejor && mejor.promoCantidad && final(mejor) < mejor.precio ? mejor.promoCantidad : null;
     if (conStock.length > 1) {
-      const diferencia = conStock[conStock.length - 1].precio - conStock[0].precio;
+      const diferencia = final(conStock[conStock.length - 1]) - final(mejor);
       if (diferencia > 0) {
-        const porcentaje = Math.round((diferencia / conStock[conStock.length - 1].precio) * 100);
-        caja.append(crear('p', 'ahorro', `Ahorrás ${pesos.format(diferencia)} (${porcentaje}%) comprando en ${nombres[conStock[0].sitio]}.`));
+        const porcentaje = Math.round((diferencia / final(conStock[conStock.length - 1])) * 100);
+        const como = promoMejor ? ` llevando ${promoMejor.unidades}` : '';
+        caja.append(crear('p', 'ahorro', `Ahorrás ${pesos.format(diferencia)} por unidad (${porcentaje}%) comprando en ${nombres[mejor.sitio]}${como}.`));
       } else {
         caja.append(crear('p', 'ahorro', 'Mismo precio en todas las tiendas que lo tienen.'));
       }
     }
+    if (conStock.length === 1 && promoMejor) {
+      caja.append(crear('p', 'ahorro', `Llevando ${promoMejor.unidades} ahorrás ${pesos.format(mejor.precio - final(mejor))} por unidad.`));
+    }
     return caja;
   }
+
+  // ---------- Rubros (dónde buscar) ----------
+  const RUBROS = [
+    { id: '', nombre: 'Todo' }, { id: 'farmacia', nombre: 'Farmacias' }, { id: 'super', nombre: 'Súper' },
+    { id: 'deportes', nombre: 'Deportes' }, { id: 'moda', nombre: 'Calzado y moda' }, { id: 'bazar', nombre: 'Bazar' },
+  ];
+  let rubroElegido = '';
+  try { rubroElegido = localStorage.getItem('rubro') || ''; } catch { /* sin almacenamiento */ }
+  if (!RUBROS.some((r) => r.id === rubroElegido)) rubroElegido = '';
+
+  function mostrarRubros() {
+    $('rubros').replaceChildren(...RUBROS.map((r) => {
+      const boton = crear('button', 'sitio', r.nombre);
+      boton.type = 'button';
+      boton.setAttribute('aria-pressed', String(r.id === rubroElegido));
+      boton.addEventListener('click', () => {
+        if (r.id === rubroElegido) return;
+        rubroElegido = r.id;
+        try { localStorage.setItem('rubro', r.id); } catch { /* sin almacenamiento */ }
+        mostrarRubros();
+        const consulta = $('consulta').value.trim();
+        if (consulta.length >= 3) buscar(consulta);
+      });
+      return boton;
+    }));
+  }
+  mostrarRubros();
+
+  const POR_PAGINA = 30;
+  let mostrando = POR_PAGINA;
 
   function mostrar() {
     if (!ultimo) return;
     const nombres = Object.fromEntries(ultimo.sitios.map((s) => [s.id, s.nombre]));
+    // Solo se muestran las tiendas que encontraron algo (o que fallaron), para no llenar la pantalla.
+    const visibles = ultimo.sitios.filter((s) => !s.ok || s.cantidad > 0 || s.id === tiendaElegida);
+    const vacias = ultimo.sitios.length - visibles.length;
     // Cada etiqueta de tienda es un botón: al tocarla se ven solo sus productos.
-    $('sitios').replaceChildren(...ultimo.sitios.map((s) => {
+    $('sitios').replaceChildren(...visibles.map((s) => {
       const boton = crear('button', 'sitio' + (s.ok ? '' : ' fallo'));
       boton.append(logo(s.id), s.ok ? `${s.nombre}: ${s.cantidad}` : `${s.nombre}: no respondió`);
       boton.type = 'button';
@@ -287,11 +347,12 @@
       boton.setAttribute('aria-pressed', String(tiendaElegida === s.id));
       boton.addEventListener('click', () => {
         tiendaElegida = tiendaElegida === s.id ? null : s.id;
+        mostrando = POR_PAGINA;
         mostrar();
         window.scrollTo({ top: 0 });
       });
       return boton;
-    }));
+    }), ...(vacias ? [crear('span', 'sin-resultados', `${vacias} ${vacias === 1 ? 'tienda' : 'tiendas'} sin resultados`)] : []));
     $('ayuda').hidden = ultimo.sitios.filter((s) => s.ok && s.cantidad > 0).length < 2;
 
     let grupos = ultimo.grupos;
@@ -306,10 +367,15 @@
       mensaje(ultimo.sitios.some((s) => !s.ok)
         ? 'No encontré resultados, y algunas tiendas no respondieron. Probá de nuevo en un rato.'
         : 'No encontré ese producto en ninguna tienda. Probá con menos palabras o con la marca.');
+      $('masResultados').hidden = true;
       return;
     }
-    $('resultados').replaceChildren(...grupos.map((g) => tarjeta(g, nombres)));
+    $('resultados').replaceChildren(...grupos.slice(0, mostrando).map((g) => tarjeta(g, nombres)));
+    const faltan = grupos.length - mostrando;
+    $('masResultados').hidden = faltan <= 0;
+    $('masResultados').textContent = `Mostrar más (${faltan} productos más)`;
   }
+  $('masResultados').addEventListener('click', () => { mostrando += POR_PAGINA; mostrar(); });
 
   function aviso(texto) {
     $('aviso').textContent = texto || '';
@@ -323,9 +389,11 @@
     $('filtro').hidden = true;
     $('ayuda').hidden = true;
     tiendaElegida = null;
+    mostrando = POR_PAGINA;
+    $('masResultados').hidden = true;
     mensaje('Consultando las tiendas…');
     try {
-      const respuesta = await fetch('/api/buscar?q=' + encodeURIComponent(consulta));
+      const respuesta = await fetch('/api/buscar?q=' + encodeURIComponent(consulta) + (rubroElegido ? '&rubros=' + rubroElegido : ''));
       const datos = await respuesta.json();
       if (!respuesta.ok) throw new Error(datos.error);
       ultimo = datos;

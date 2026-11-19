@@ -45,14 +45,14 @@ test('no une productos sin código de barras confiable', async () => {
   assert.strictEqual(r.grupos.length, 2);
 });
 
-test('un sitio caído no rompe la búsqueda y la oferta sin stock va al final', async () => {
+test('un sitio caído no rompe la búsqueda y la oferta sin stock no se muestra', async () => {
   const r = await comparar('crema', [
     { id: 'caido', nombre: 'caido', buscar: async () => { throw new Error('El sitio respondió con error 503'); } },
     sitio('a', [producto('a', 'Crema', '7790000000017', 100, { stock: false })]),
     sitio('b', [producto('b', 'Crema', '7790000000017', 300)]),
   ]);
   assert.deepStrictEqual(r.sitios.map((s) => s.ok), [false, true, true]);
-  assert.deepStrictEqual(r.grupos[0].ofertas.map((o) => o.sitio), ['b', 'a']);
+  assert.deepStrictEqual(r.grupos[0].ofertas.map((o) => o.sitio), ['b']);
 });
 
 test('un código de barras busca el producto exacto y lo pone primero', async () => {
@@ -71,4 +71,50 @@ test('un código que ninguna tienda tiene devuelve cero resultados', async () =>
   const r = await comparar('7790000000017', [sitio('a', [producto('a', 'Otra cosa', '7791111111116', 100)])]);
   assert.strictEqual(r.grupos.length, 0);
   assert.strictEqual(r.codigo, '7790000000017');
+});
+
+test('"zapatillas" encuentra "Zapatilla" y "botines" encuentra "Botín"', async () => {
+  const r = await comparar('zapatillas', [sitio('a', [producto('a', 'Zapatilla Topper Boris', '', 100), producto('a', 'Remera Topper', '', 50)])]);
+  assert.deepStrictEqual(r.grupos.map((g) => g.nombre), ['Zapatilla Topper Boris']);
+  const b = await comparar('botines', [sitio('a', [producto('a', 'Botín Nike Phantom', '', 100)])]);
+  assert.strictEqual(b.grupos.length, 1);
+});
+
+test('une productos con talles si comparten el código de algún talle', async () => {
+  const r = await comparar('campus', [
+    sitio('a', [producto('a', 'Zapatillas adidas Campus 00s', '4067906317287', 129999, { eans: ['4067906317287', '4067906317294'] })]),
+    sitio('b', [producto('b', 'Zapatilla Adidas Campus 00s Niño', '4067906317294', 119999, { eans: ['4067906317294', '4067906317300'] })]),
+  ]);
+  assert.strictEqual(r.grupos.length, 1);
+  assert.deepStrictEqual(r.grupos[0].ofertas.map((o) => o.sitio), ['b', 'a']);
+});
+
+test('con muchas coincidencias completas se descartan las parciales', async () => {
+  const completas = Array.from({ length: 10 }, (_, i) => producto('a', `Zapatilla Campus ${i}`, '', 100 + i));
+  const r = await comparar('zapatilla campus', [sitio('a', [...completas, producto('a', 'Zapatilla Superstar', '', 50)])]);
+  assert.strictEqual(r.grupos.length, 10);
+  assert.ok(r.grupos.every((g) => /campus/i.test(g.nombre)));
+});
+
+test('usa las palabras de la dirección del producto cuando el nombre no dice qué es', async () => {
+  const r = await comparar('zapatillas', [sitio('a', [producto('a', '1300 Waterproof 4E', '', 164849, { url: 'https://www.newbalance.com.ar/hombre-zapatillas-N1T000045080031.html' })])]);
+  assert.strictEqual(r.grupos.length, 1);
+});
+
+test('ordena los productos del más barato al más caro', async () => {
+  const r = await comparar('yerba', [
+    sitio('a', [producto('a', 'Yerba Uno', '7790000000017', 5000), producto('a', 'Yerba Dos', '7790000000024', 2000)]),
+    sitio('b', [producto('b', 'Yerba Tres', '7790000000031', 3500)]),
+  ]);
+  assert.deepStrictEqual(r.grupos.map((g) => g.nombre), ['Yerba Dos', 'Yerba Tres', 'Yerba Uno']);
+});
+
+test('una promo por cantidad más barata gana el primer lugar', async () => {
+  const r = await comparar('shampoo', [
+    sitio('a', [producto('a', 'Shampoo Fructis 350', '7791290000017', 10100, { promoCantidad: { unidades: 2, precioUnidad: 6060, texto: 'Llevando 2' } })]),
+    sitio('b', [producto('b', 'Shampoo Fructis 350', '7791290000017', 8000)]),
+    sitio('c', [producto('c', 'Shampoo Sedal', '7791290000024', 7000)]),
+  ]);
+  assert.strictEqual(r.grupos[0].nombre, 'Shampoo Fructis 350');
+  assert.deepStrictEqual(r.grupos[0].ofertas.map((o) => [o.sitio, o.precioFinal]), [['a', 6060], ['b', 8000]]);
 });

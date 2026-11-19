@@ -1,11 +1,11 @@
 {
-  "name": "Precio Pirata",
-  "short_name": "Precio Pirata",
-  "description": "Compará precios entre farmacias y supermercados online",
+  "name": "Ahorra+Sgo",
+  "short_name": "Ahorra+Sgo",
+  "description": "Las mejores ofertas están acá: compará precios entre tiendas online con envío a Santiago del Estero",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#eef5fb",
-  "theme_color": "#c8102e",
+  "theme_color": "#2968c8",
   "icons": [
     {
       "src": "/icono-192.png",
@@ -17,12 +17,6 @@
       "src": "/icono-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "/icono.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
       "purpose": "any"
     }
   ]
