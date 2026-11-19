@@ -84,6 +84,9 @@
   .oferta .precio { font-size: 1.1rem; font-weight: 700; }
   .oferta .lista { display: block; font-size: .78rem; color: var(--suave); text-decoration: line-through; }
   .oferta.mejor .precio { color: var(--ahorro); }
+  .oferta .promo-cantidad { display: block; font-size: .78rem; font-weight: 700; color: #b3261e; }
+  .oferta .una-unidad { display: block; font-size: .74rem; color: var(--suave); }
+  @media (prefers-color-scheme: dark) { .oferta .promo-cantidad { color: #ffb38a; } }
   .oferta.agotado { opacity: .55; }
   .etiqueta { display: inline-block; font-size: .7rem; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: var(--ahorro-fondo); color: var(--ahorro); margin-left: 6px; }
   .ahorro { margin: 8px 0 0; padding: 8px 10px; border-radius: 10px; font-size: .88rem; background: var(--ahorro-fondo); color: var(--ahorro); }
@@ -251,9 +254,11 @@
     cabecera.append(titulos);
     caja.append(cabecera);
 
+    // Precio por unidad que realmente se paga, contando promos como "llevando 2".
+    const final = (oferta) => oferta.precioFinal || oferta.precio;
     const conStock = grupo.ofertas.filter((oferta) => oferta.stock);
     grupo.ofertas.forEach((oferta, i) => {
-      const esMejor = oferta.stock && i === 0 && conStock.length > 1 && conStock[1].precio > oferta.precio;
+      const esMejor = oferta.stock && i === 0 && conStock.length > 1 && final(conStock[1]) > final(oferta);
       const fila = crear('a', 'oferta' + (esMejor ? ' mejor' : '') + (oferta.stock ? '' : ' agotado'));
       fila.href = oferta.url; fila.target = '_blank'; fila.rel = 'noopener';
 
@@ -265,20 +270,34 @@
       if (detalle) tienda.append(crear('span', 'detalle', detalle));
 
       const precios = crear('span', 'precios');
-      precios.append(crear('span', 'precio', (oferta.desde ? 'desde ' : '') + pesos.format(oferta.precio)));
-      if (oferta.precioLista > oferta.precio) precios.append(crear('span', 'lista', pesos.format(oferta.precioLista)));
+      const promo = oferta.promoCantidad && final(oferta) < oferta.precio ? oferta.promoCantidad : null;
+      if (promo) {
+        // Con promo por cantidad, se destaca el precio por unidad llevando varias.
+        precios.append(crear('span', 'precio', pesos.format(final(oferta)) + ' c/u'));
+        precios.append(crear('span', 'promo-cantidad', `🔥 llevando ${promo.unidades}`));
+        precios.append(crear('span', 'una-unidad', `1 unidad: ${pesos.format(oferta.precio)}`));
+      } else {
+        precios.append(crear('span', 'precio', (oferta.desde ? 'desde ' : '') + pesos.format(oferta.precio)));
+        if (oferta.precioLista > oferta.precio) precios.append(crear('span', 'lista', pesos.format(oferta.precioLista)));
+      }
       fila.append(tienda, precios);
       caja.append(fila);
     });
 
+    const mejor = conStock[0];
+    const promoMejor = mejor && mejor.promoCantidad && final(mejor) < mejor.precio ? mejor.promoCantidad : null;
     if (conStock.length > 1) {
-      const diferencia = conStock[conStock.length - 1].precio - conStock[0].precio;
+      const diferencia = final(conStock[conStock.length - 1]) - final(mejor);
       if (diferencia > 0) {
-        const porcentaje = Math.round((diferencia / conStock[conStock.length - 1].precio) * 100);
-        caja.append(crear('p', 'ahorro', `Ahorrás ${pesos.format(diferencia)} (${porcentaje}%) comprando en ${nombres[conStock[0].sitio]}.`));
+        const porcentaje = Math.round((diferencia / final(conStock[conStock.length - 1])) * 100);
+        const como = promoMejor ? ` llevando ${promoMejor.unidades}` : '';
+        caja.append(crear('p', 'ahorro', `Ahorrás ${pesos.format(diferencia)} por unidad (${porcentaje}%) comprando en ${nombres[mejor.sitio]}${como}.`));
       } else {
         caja.append(crear('p', 'ahorro', 'Mismo precio en todas las tiendas que lo tienen.'));
       }
+    }
+    if (conStock.length === 1 && promoMejor) {
+      caja.append(crear('p', 'ahorro', `Llevando ${promoMejor.unidades} ahorrás ${pesos.format(mejor.precio - final(mejor))} por unidad.`));
     }
     return caja;
   }

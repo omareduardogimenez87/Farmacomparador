@@ -100,3 +100,21 @@ test('usa las palabras de la dirección del producto cuando el nombre no dice qu
   const r = await comparar('zapatillas', [sitio('a', [producto('a', '1300 Waterproof 4E', '', 164849, { url: 'https://www.newbalance.com.ar/hombre-zapatillas-N1T000045080031.html' })])]);
   assert.strictEqual(r.grupos.length, 1);
 });
+
+test('ordena los productos del más barato al más caro', async () => {
+  const r = await comparar('yerba', [
+    sitio('a', [producto('a', 'Yerba Uno', '7790000000017', 5000), producto('a', 'Yerba Dos', '7790000000024', 2000)]),
+    sitio('b', [producto('b', 'Yerba Tres', '7790000000031', 3500)]),
+  ]);
+  assert.deepStrictEqual(r.grupos.map((g) => g.nombre), ['Yerba Dos', 'Yerba Tres', 'Yerba Uno']);
+});
+
+test('una promo por cantidad más barata gana el primer lugar', async () => {
+  const r = await comparar('shampoo', [
+    sitio('a', [producto('a', 'Shampoo Fructis 350', '7791290000017', 10100, { promoCantidad: { unidades: 2, precioUnidad: 6060, texto: 'Llevando 2' } })]),
+    sitio('b', [producto('b', 'Shampoo Fructis 350', '7791290000017', 8000)]),
+    sitio('c', [producto('c', 'Shampoo Sedal', '7791290000024', 7000)]),
+  ]);
+  assert.strictEqual(r.grupos[0].nombre, 'Shampoo Fructis 350');
+  assert.deepStrictEqual(r.grupos[0].ofertas.map((o) => [o.sitio, o.precioFinal]), [['a', 6060], ['b', 8000]]);
+});

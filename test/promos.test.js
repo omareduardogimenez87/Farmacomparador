@@ -26,3 +26,15 @@ test('lee la lista de promociones de Farmacity', () => {
   assert.strictEqual(promo.titulo, 'TARJETA NARANJA (sucursal)');
   assert.deepStrictEqual(promo.dias, [3]);
 });
+
+test('reconoce promos por cantidad en los nombres de colecciones', () => {
+  const { unidadesDePromo } = require('../lib/plataformas');
+  assert.strictEqual(unidadesDePromo('Ofertas 2x1'), 2);
+  assert.strictEqual(unidadesDePromo('PROMO 3X2 SURTIDO'), 3);
+  assert.strictEqual(unidadesDePromo('Promo 2do al 80%'), 2);
+  assert.strictEqual(unidadesDePromo('PROMO 2DA AL 70 ELVIVE'), 2);
+  assert.strictEqual(unidadesDePromo('2DA50'), 2);
+  assert.strictEqual(unidadesDePromo('Hasta 2x1 en Bebidas'), 0);
+  assert.strictEqual(unidadesDePromo('Últimas oportunidades'), 0);
+  assert.strictEqual(unidadesDePromo('Pack 6x4 cm'), 0);
+});
