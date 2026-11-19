@@ -3,22 +3,27 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Seco y furioso</title>
+<title>Precio Pirata</title>
 <meta name="description" content="Compará precios entre farmacias y supermercados online">
-<meta name="theme-color" content="#0f6b5c">
+<meta name="theme-color" content="#c8102e">
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="icon" href="/icono.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="/icono.svg">
-<meta name="apple-mobile-web-app-title" content="Seco y furioso">
+<link rel="icon" href="/icono-48.png" type="image/png" sizes="48x48">
+<link rel="apple-touch-icon" href="/icono-180.png">
+<meta name="apple-mobile-web-app-title" content="Precio Pirata">
 <style>
+  /* Colores de la bandera de Santiago del Estero (celeste, blanco, rojo punzó y el sol)
+     y del fuego del Hot Sale. */
   :root {
-    --fondo: #f3f5f4; --tarjeta: #ffffff; --texto: #17211e; --suave: #5d6b66; --borde: #dde3e0;
-    --marca: #0f6b5c; --marca-texto: #ffffff; --ahorro: #0a7a3d; --ahorro-fondo: #e2f5e9; --error: #b3261e;
+    --fondo: #eef5fb; --tarjeta: #ffffff; --texto: #1a1f29; --suave: #566170; --borde: #d6e3ef;
+    --marca: #c8102e; --marca-texto: #ffffff; --ahorro: #0a7a3d; --ahorro-fondo: #e2f5e9; --error: #b3261e;
+    --celeste: #5ba4d9; --sol: #f6b40e; --fuego: #ff6b1a;
   }
   @media (prefers-color-scheme: dark) {
     :root {
-      --fondo: #111715; --tarjeta: #1b2421; --texto: #e8eeeb; --suave: #9aa9a3; --borde: #2c3834;
-      --marca: #2aa58f; --marca-texto: #06201b; --ahorro: #6fdc9a; --ahorro-fondo: #143524; --error: #ff8a80;
+      --fondo: #0f1620; --tarjeta: #18222e; --texto: #e9eef4; --suave: #9fb0c2; --borde: #2a3a4c;
+      --marca: #ff5a5f; --marca-texto: #1a0507; --ahorro: #6fdc9a; --ahorro-fondo: #143524; --error: #ff8a80;
+      --celeste: #6fb4e6; --sol: #f6b40e; --fuego: #ff8a3d;
     }
   }
   * { box-sizing: border-box; }
@@ -31,8 +36,17 @@
     position: sticky; top: 0; z-index: 2; background: var(--fondo);
     padding: calc(12px + env(safe-area-inset-top)) 16px 10px; border-bottom: 1px solid var(--borde);
   }
+  /* Franja con la bandera de Santiago del Estero arriba de todo */
+  header {
+    padding-top: calc(24px + env(safe-area-inset-top));
+    background:
+      linear-gradient(to bottom, var(--celeste) 0 30%, #ffffff 30% 40%, #c8102e 40% 60%, #ffffff 60% 70%, var(--celeste) 70%) top / 100% 12px no-repeat,
+      var(--fondo);
+  }
   main, header > * { max-width: 640px; margin-left: auto; margin-right: auto; }
   h1 { font-size: 1.15rem; margin: 0 0 10px; color: var(--marca); }
+  .etiqueta { background: linear-gradient(90deg, #fff1d6, #ffe0cc) !important; color: #b3261e !important; }
+  @media (prefers-color-scheme: dark) { .etiqueta { background: #3a1d12 !important; color: #ffb38a !important; } }
   form { display: flex; gap: 8px; }
   input[type=search] {
     flex: 1; min-width: 0; padding: 12px 14px; font-size: 16px; color: var(--texto);
@@ -108,14 +122,27 @@
   }
   .opcion { display: flex; align-items: center; gap: 8px; font-size: .88rem; color: var(--suave); }
   .opcion input { width: 20px; height: 20px; accent-color: var(--marca); }
+  /* Promociones */
+  .buscador-promos { width: 100%; margin: 0 0 12px; padding: 10px 12px; font: inherit; color: var(--texto); background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 10px; }
+  .grupo-promos { margin: 14px 0 8px; font-size: .95rem; color: var(--suave); }
+  .promo { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 14px; padding: 10px 12px; margin-bottom: 10px; }
+  .promo-tienda { display: flex; align-items: center; gap: 6px; font-size: .8rem; color: var(--suave); margin-bottom: 4px; }
+  .promo h3 { font-size: .98rem; margin: 0 0 4px; overflow-wrap: anywhere; }
+  .promo details { font-size: .82rem; color: var(--suave); }
+  .promo summary { cursor: pointer; color: var(--marca); }
+  .promo .dias { font-size: .78rem; font-weight: 600; color: var(--ahorro); margin: 0 0 4px; }
+  .enlace-tienda { display: flex; align-items: center; gap: 8px; padding: 10px 12px; margin-bottom: 8px; border: 1px dashed var(--borde); border-radius: 12px; color: var(--marca); text-decoration: none; }
+
   /* Marca de agua al pie de la página */
   .firma {
     margin: 8px 0 0; padding: 4px 16px calc(16px + env(safe-area-inset-bottom)); text-align: center; color: var(--suave);
   }
   .firma p { margin: 0; }
   .firma-prueba { margin-bottom: 8px !important; font-size: .78rem; }
+  h1 { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 8px; }
+  .logo-app { width: 34px; height: 34px; border-radius: 8px; flex: none; }
   .beta {
-    display: inline-block; margin-left: 6px; padding: 2px 8px; border-radius: 999px; vertical-align: 3px;
+    display: inline-block; padding: 2px 8px; border-radius: 999px;
     font-size: .68rem; font-weight: 700; letter-spacing: .02em; color: var(--marca); border: 1px solid var(--marca);
   }
   .firma-marca { font-size: 1.05rem; font-weight: 700; letter-spacing: .12em; opacity: .45; user-select: none; }
@@ -126,9 +153,10 @@
 </head>
 <body>
 <header>
-  <h1>Seco y furioso <span class="beta">Versión de prueba</span></h1>
+  <h1><img class="logo-app" src="/icono.svg" alt="" width="34" height="34">Precio Pirata <span class="beta">Versión de prueba</span></h1>
   <div class="pestanas" role="tablist">
     <button id="pestanaBuscar" type="button" role="tab" aria-selected="true" aria-controls="vistaBuscar">Buscar</button>
+    <button id="pestanaPromos" type="button" role="tab" aria-selected="false" aria-controls="vistaPromos">🔥 Promos</button>
     <button id="pestanaAsistente" type="button" role="tab" aria-selected="false" aria-controls="vistaAsistente">Asistente</button>
   </div>
   <form id="formulario" role="search">
@@ -147,9 +175,16 @@
   <div id="resultados"><p class="mensaje">Escribí un producto y te muestro el precio en cada tienda.</p></div>
   <footer>Los precios son los publicados en la web de cada tienda al momento de buscar. Pueden no incluir promociones bancarias, de obra social ni del tipo 2x1. Los logos pertenecen a cada tienda.</footer>
 </main>
+<main id="vistaPromos" role="tabpanel" hidden>
+  <p class="ayuda">Descuentos, reintegros y cuotas que publica cada tienda. Elegí el día para ver qué conviene.</p>
+  <div id="diasPromo" class="sitios" role="group" aria-label="Día de la semana"></div>
+  <input id="filtroPromo" class="buscador-promos" type="search" placeholder="Filtrar por banco o tarjeta" aria-label="Filtrar promociones por banco o tarjeta" autocomplete="off">
+  <div id="listaPromos"><p class="mensaje">Cargando promociones…</p></div>
+  <div id="otrasPromos"></div>
+</main>
 <main id="vistaAsistente" role="tabpanel" hidden>
   <div id="chat" class="chat">
-    <div class="burbuja asistente">¡Hola! Preguntame por precios, por ejemplo: "¿Dónde está más barata la yerba Playadito de 1 kilo?". Podés escribir o tocar el micrófono y hablar.</div>
+    <div class="burbuja asistente">¡Hola! Preguntame por precios o promociones, por ejemplo: "¿Dónde está más barata la yerba Playadito de 1 kilo?" o "¿Qué día conviene comprar en La Anónima?". Podés escribir o tocar el micrófono y hablar.</div>
   </div>
   <form id="formClave" class="clave" hidden>
     <input id="clave" type="password" placeholder="Clave del asistente" aria-label="Clave del asistente" autocomplete="current-password">
@@ -216,7 +251,7 @@
 
       const tienda = crear('span', 'tienda');
       tienda.append(logo(oferta.sitio), nombres[oferta.sitio] || oferta.sitio);
-      if (esMejor) tienda.append(crear('span', 'etiqueta', 'Más barato'));
+      if (esMejor) tienda.append(crear('span', 'etiqueta', '🔥 Más barato'));
       // Si el nombre difiere entre tiendas, se muestra para que puedas verificar que es lo mismo.
       const detalle = !oferta.stock ? 'Sin stock' : oferta.nombre !== grupo.nombre ? oferta.nombre : '';
       if (detalle) tienda.append(crear('span', 'detalle', detalle));
@@ -331,16 +366,94 @@
 
   // ---------- Pestañas ----------
   function elegirPestana(cual) {
-    const asistente = cual === 'asistente';
-    $('pestanaBuscar').setAttribute('aria-selected', String(!asistente));
-    $('pestanaAsistente').setAttribute('aria-selected', String(asistente));
-    $('vistaBuscar').hidden = asistente;
-    $('vistaAsistente').hidden = !asistente;
-    $('formulario').hidden = asistente;
-    if (asistente) $('pregunta').focus();
+    for (const [nombre, pestana, vista] of [['buscar', 'pestanaBuscar', 'vistaBuscar'], ['promos', 'pestanaPromos', 'vistaPromos'], ['asistente', 'pestanaAsistente', 'vistaAsistente']]) {
+      $(pestana).setAttribute('aria-selected', String(cual === nombre));
+      $(vista).hidden = cual !== nombre;
+    }
+    $('formulario').hidden = cual !== 'buscar';
+    if (cual === 'asistente') $('pregunta').focus();
+    if (cual === 'promos') cargarPromos();
   }
   $('pestanaBuscar').addEventListener('click', () => elegirPestana('buscar'));
+  $('pestanaPromos').addEventListener('click', () => elegirPestana('promos'));
   $('pestanaAsistente').addEventListener('click', () => elegirPestana('asistente'));
+
+  // ---------- Promociones bancarias (sin costo: no usa IA) ----------
+  const NOMBRES_DIAS = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+  let promos = null;
+  let diaElegido = null;
+
+  async function cargarPromos() {
+    if (promos) return;
+    try {
+      const respuesta = await fetch('/api/promos');
+      const datos = await respuesta.json();
+      if (!respuesta.ok) throw new Error(datos.error);
+      promos = datos;
+      if (diaElegido === null) diaElegido = datos.hoy;
+      mostrarPromos();
+    } catch (error) {
+      $('listaPromos').replaceChildren(crear('p', 'mensaje', error.message && !/fetch|JSON/i.test(error.message) ? error.message : 'No se pudieron cargar las promociones. Revisá tu conexión.'));
+    }
+  }
+
+  function textoDias(dias) {
+    if (dias.length === 7) return 'Todos los días';
+    return dias.map((d) => NOMBRES_DIAS[d]).join(', ');
+  }
+
+  function tarjetaPromo(tienda, promo) {
+    const caja = crear('article', 'promo');
+    const cabecera = crear('div', 'promo-tienda');
+    cabecera.append(logo(tienda.id), tienda.nombre);
+    caja.append(cabecera, crear('h3', null, promo.titulo), crear('p', 'dias', textoDias(promo.dias)));
+    if (promo.detalle && promo.detalle !== promo.titulo) {
+      const mas = crear('details');
+      mas.append(crear('summary', null, 'Condiciones'), crear('p', null, promo.detalle));
+      caja.append(mas);
+    }
+    return caja;
+  }
+
+  function mostrarPromos() {
+    if (!promos) return;
+    $('diasPromo').replaceChildren(...NOMBRES_DIAS.map((_, i) => (i + 1) % 7).map((d) => {
+      const boton = crear('button', 'sitio', d === promos.hoy ? `Hoy (${NOMBRES_DIAS[d]})` : NOMBRES_DIAS[d]);
+      boton.type = 'button';
+      boton.setAttribute('aria-pressed', String(d === diaElegido));
+      boton.addEventListener('click', () => { diaElegido = d; mostrarPromos(); });
+      return boton;
+    }));
+
+    const filtro = $('filtroPromo').value.trim().toLowerCase();
+    const coincide = (p) => !filtro || `${p.titulo} ${p.detalle}`.toLowerCase().includes(filtro);
+    const delDia = [];
+    const siempre = [];
+    for (const tienda of promos.tiendas) {
+      for (const promo of tienda.promos) {
+        if (!promo.dias.includes(diaElegido) || !coincide(promo)) continue;
+        (promo.dias.length === 7 ? siempre : delDia).push(tarjetaPromo(tienda, promo));
+      }
+    }
+    const contenido = [];
+    contenido.push(crear('h2', 'grupo-promos', `Especiales del ${NOMBRES_DIAS[diaElegido].toLowerCase()} (${delDia.length})`));
+    contenido.push(...(delDia.length ? delDia : [crear('p', 'ayuda', 'No hay promociones especiales para este día con ese filtro.')]));
+    contenido.push(crear('h2', 'grupo-promos', `Todos los días (${siempre.length})`));
+    contenido.push(...(siempre.length ? siempre : [crear('p', 'ayuda', 'Ninguna con ese filtro.')]));
+    $('listaPromos').replaceChildren(...contenido);
+
+    // Tiendas cuyas promos no se pueden leer automáticamente: enlace a su página oficial.
+    const otras = promos.tiendas.filter((t) => !t.legible || !t.ok);
+    const enlaces = otras.map((t) => {
+      const enlace = crear('a', 'enlace-tienda');
+      enlace.href = t.url; enlace.target = '_blank'; enlace.rel = 'noopener';
+      enlace.append(logo(t.id), `Ver las promos de ${t.nombre} en su web`);
+      return enlace;
+    });
+    $('otrasPromos').replaceChildren(...(enlaces.length ? [crear('h2', 'grupo-promos', 'Otras tiendas'), ...enlaces] : []),
+      crear('p', 'ayuda', 'Leé siempre las condiciones: muchas promociones valen solo en algunas sucursales o ciudades, solo online, o tienen tope de reintegro.'));
+  }
+  $('filtroPromo').addEventListener('input', mostrarPromos);
 
   // ---------- Hablarle a la app (reconocimiento de voz del navegador) ----------
   const Reconocimiento = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -519,7 +632,10 @@
       espera.textContent = datos.respuesta;
       historial.push({ rol: 'asistente', texto: datos.respuesta });
       // Cada búsqueda que hizo la IA se puede abrir en la pestaña Buscar.
-      if (datos.busquedas && datos.busquedas.length) {
+      if (datos.promos) {
+        datos.busquedas = datos.busquedas || [];
+      }
+      if ((datos.busquedas && datos.busquedas.length) || datos.promos) {
         const lista = crear('div', 'busquedas');
         for (const consulta of [...new Set(datos.busquedas)]) {
           const boton = crear('button', null, `Ver "${consulta}"`);
@@ -529,6 +645,12 @@
             $('consulta').value = consulta;
             buscar(consulta);
           });
+          lista.append(boton);
+        }
+        if (datos.promos) {
+          const boton = crear('button', null, 'Ver promociones');
+          boton.type = 'button';
+          boton.addEventListener('click', () => elegirPestana('promos'));
           lista.append(boton);
         }
         espera.append(lista);

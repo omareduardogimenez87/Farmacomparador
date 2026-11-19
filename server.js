@@ -4,6 +4,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const buscar = require('./api/buscar');
+const promos = require('./api/promos');
 const chat = require('./api/chat');
 const foto = require('./api/foto');
 
@@ -20,6 +21,7 @@ const TIPOS = {
 const servidor = http.createServer((req, res) => {
   const ruta = new URL(req.url, 'http://localhost').pathname;
   if (ruta === '/api/buscar') return buscar(req, res);
+  if (ruta === '/api/promos') return promos(req, res);
   if (ruta === '/api/chat') return chat(req, res);
   if (ruta === '/api/foto') return foto(req, res);
 
@@ -38,4 +40,4 @@ const servidor = http.createServer((req, res) => {
 });
 
 const puerto = process.env.PORT || 3000;
-servidor.listen(puerto, () => console.log(`Seco y furioso listo en http://localhost:${puerto}`));
+servidor.listen(puerto, () => console.log(`Precio Pirata listo en http://localhost:${puerto}`));
