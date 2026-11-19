@@ -25,6 +25,8 @@ App para el celular que busca un producto y muestra el precio en varias farmacia
 | --- | --- |
 | Nike, adidas, Capaccioni | Tienen protección contra programas automáticos (Cloudflare o Akamai) |
 | Grimoldi, Vans, Muni Depot | Usan buscadores propios que la app no puede leer |
+| Natura en Mercado Libre | Mercado Libre rechaza las consultas automáticas (error 403) |
+| Dermaglós | Su sitio es institucional: no vende ni publica precios (sus productos están en las farmacias) |
 | Diarco | Su web no publica precios, y sus ofertas son folletos en imagen |
 | Farmar | Su buscador exige una credencial de acceso |
 | L'Oréal Paris | El sitio no publica precios |
