@@ -8,7 +8,7 @@ App para el celular que busca un producto y muestra el precio en varias farmacia
 
 ## Tiendas incluidas
 
-67 tiendas, agrupadas por rubro. Se puede buscar en todas o en un solo rubro.
+71 tiendas, agrupadas por rubro. Se puede buscar en todas o en un solo rubro.
 
 | Rubro | Tiendas |
 | --- | --- |
@@ -18,6 +18,7 @@ App para el celular que busca un producto y muestra el precio en varias farmacia
 | Calzado y moda | Grid, Solo Urbano, Paco García, Indonesia Shop, Vallejo Calzados, Aurelius, Go Store, 47 Street, Cuesta Blanca, Mimo & Co, Briganti, Tejano, Burgues, Anation |
 | Perfumería y cosmética | Juleriaque, Rouge, Pigmento, L'Occitane, Beauty24, Todoperfumes (NO ORIGINAL: inspirado en), Mixperfume (decants) |
 | Bazar y juguetería | Las Mil Novedades (precios mayoristas; compra online mínima de $80.000) |
+| Mayoristas | Ximaro (mín. 10 productos), Somostec (mínimo a consultar), Encanto Importaciones (mín. $100.000 con IVA), Megamix (mín. $400.000) |
 
 **No incluidas:**
 
@@ -30,8 +31,10 @@ App para el celular que busca un producto y muestra el precio en varias farmacia
 | Diarco | Su web no publica precios, y sus ofertas son folletos en imagen |
 | Farmar | Su buscador exige una credencial de acceso |
 | L'Oréal Paris | El sitio no publica precios |
+| Elit | Hay que darse de alta como cliente para ver precios |
+| Matana, Extracto Importado | Su buscador no se pudo leer de forma automática |
 
-Las tiendas se consultan por plataforma (`lib/plataformas.js`): VTEX, Shopify, Tiendanube, Magento y Salesforce. Para sumar una tienda de esas plataformas alcanza con agregar una línea en `lib/sitios.js`.
+Las tiendas se consultan por plataforma (`lib/plataformas.js`): VTEX, Shopify, Tiendanube, Magento, Salesforce, WooCommerce, PrestaShop y Odoo. Para sumar una tienda de esas plataformas alcanza con agregar una línea en `lib/sitios.js`.
 
 ## Cómo compara
 
