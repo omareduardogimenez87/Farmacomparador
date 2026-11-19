@@ -45,14 +45,14 @@ test('no une productos sin código de barras confiable', async () => {
   assert.strictEqual(r.grupos.length, 2);
 });
 
-test('un sitio caído no rompe la búsqueda y la oferta sin stock va al final', async () => {
+test('un sitio caído no rompe la búsqueda y la oferta sin stock no se muestra', async () => {
   const r = await comparar('crema', [
     { id: 'caido', nombre: 'caido', buscar: async () => { throw new Error('El sitio respondió con error 503'); } },
     sitio('a', [producto('a', 'Crema', '7790000000017', 100, { stock: false })]),
     sitio('b', [producto('b', 'Crema', '7790000000017', 300)]),
   ]);
   assert.deepStrictEqual(r.sitios.map((s) => s.ok), [false, true, true]);
-  assert.deepStrictEqual(r.grupos[0].ofertas.map((o) => o.sitio), ['b', 'a']);
+  assert.deepStrictEqual(r.grupos[0].ofertas.map((o) => o.sitio), ['b']);
 });
 
 test('un código de barras busca el producto exacto y lo pone primero', async () => {
