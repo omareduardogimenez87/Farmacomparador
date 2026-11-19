@@ -122,6 +122,12 @@
   }
   .opcion { display: flex; align-items: center; gap: 8px; font-size: .88rem; color: var(--suave); }
   .opcion input { width: 20px; height: 20px; accent-color: var(--marca); }
+  /* Rubros y "mostrar más" */
+  .rubros { padding-bottom: 10px; border-bottom: 1px solid var(--borde); margin-bottom: 10px; }
+  .rubros .sitio { font-weight: 600; }
+  .sin-resultados { font-size: .78rem; color: var(--suave); align-self: center; }
+  .mas-resultados { display: block; width: 100%; margin: 4px 0 12px; background: var(--tarjeta); color: var(--marca); border: 1px solid var(--borde); }
+
   /* Promociones */
   .buscador-promos { width: 100%; margin: 0 0 12px; padding: 10px 12px; font: inherit; color: var(--texto); background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 10px; }
   .grupo-promos { margin: 14px 0 8px; font-size: .95rem; color: var(--suave); }
@@ -169,10 +175,12 @@
 </header>
 <main id="vistaBuscar" role="tabpanel">
   <p id="aviso" class="aviso" hidden></p>
+  <div id="rubros" class="sitios rubros" role="group" aria-label="Rubro donde buscar"></div>
   <div id="sitios" class="sitios"></div>
   <p id="ayuda" class="ayuda" hidden>Tocá una tienda para ver solo sus productos.</p>
   <label id="filtro" class="filtro" hidden><input id="soloComparables" type="checkbox"> Mostrar solo productos que están en 2 o más tiendas</label>
-  <div id="resultados"><p class="mensaje">Escribí un producto y te muestro el precio en cada tienda.</p></div>
+  <div id="resultados"><p class="mensaje">Escribí un producto y te muestro el precio en cada tienda. Elegí un rubro para buscar más rápido.</p></div>
+  <button id="masResultados" class="mas-resultados" type="button" hidden>Mostrar más</button>
   <footer>Los precios son los publicados en la web de cada tienda al momento de buscar. Pueden no incluir promociones bancarias, de obra social ni del tipo 2x1. Los logos pertenecen a cada tienda.</footer>
 </main>
 <main id="vistaPromos" role="tabpanel" hidden>
@@ -275,11 +283,44 @@
     return caja;
   }
 
+  // ---------- Rubros (dónde buscar) ----------
+  const RUBROS = [
+    { id: '', nombre: 'Todo' }, { id: 'farmacia', nombre: 'Farmacias' }, { id: 'super', nombre: 'Súper' },
+    { id: 'deportes', nombre: 'Deportes' }, { id: 'moda', nombre: 'Calzado y moda' }, { id: 'bazar', nombre: 'Bazar' },
+  ];
+  let rubroElegido = '';
+  try { rubroElegido = localStorage.getItem('rubro') || ''; } catch { /* sin almacenamiento */ }
+  if (!RUBROS.some((r) => r.id === rubroElegido)) rubroElegido = '';
+
+  function mostrarRubros() {
+    $('rubros').replaceChildren(...RUBROS.map((r) => {
+      const boton = crear('button', 'sitio', r.nombre);
+      boton.type = 'button';
+      boton.setAttribute('aria-pressed', String(r.id === rubroElegido));
+      boton.addEventListener('click', () => {
+        if (r.id === rubroElegido) return;
+        rubroElegido = r.id;
+        try { localStorage.setItem('rubro', r.id); } catch { /* sin almacenamiento */ }
+        mostrarRubros();
+        const consulta = $('consulta').value.trim();
+        if (consulta.length >= 3) buscar(consulta);
+      });
+      return boton;
+    }));
+  }
+  mostrarRubros();
+
+  const POR_PAGINA = 30;
+  let mostrando = POR_PAGINA;
+
   function mostrar() {
     if (!ultimo) return;
     const nombres = Object.fromEntries(ultimo.sitios.map((s) => [s.id, s.nombre]));
+    // Solo se muestran las tiendas que encontraron algo (o que fallaron), para no llenar la pantalla.
+    const visibles = ultimo.sitios.filter((s) => !s.ok || s.cantidad > 0 || s.id === tiendaElegida);
+    const vacias = ultimo.sitios.length - visibles.length;
     // Cada etiqueta de tienda es un botón: al tocarla se ven solo sus productos.
-    $('sitios').replaceChildren(...ultimo.sitios.map((s) => {
+    $('sitios').replaceChildren(...visibles.map((s) => {
       const boton = crear('button', 'sitio' + (s.ok ? '' : ' fallo'));
       boton.append(logo(s.id), s.ok ? `${s.nombre}: ${s.cantidad}` : `${s.nombre}: no respondió`);
       boton.type = 'button';
@@ -287,11 +328,12 @@
       boton.setAttribute('aria-pressed', String(tiendaElegida === s.id));
       boton.addEventListener('click', () => {
         tiendaElegida = tiendaElegida === s.id ? null : s.id;
+        mostrando = POR_PAGINA;
         mostrar();
         window.scrollTo({ top: 0 });
       });
       return boton;
-    }));
+    }), ...(vacias ? [crear('span', 'sin-resultados', `${vacias} ${vacias === 1 ? 'tienda' : 'tiendas'} sin resultados`)] : []));
     $('ayuda').hidden = ultimo.sitios.filter((s) => s.ok && s.cantidad > 0).length < 2;
 
     let grupos = ultimo.grupos;
@@ -306,10 +348,15 @@
       mensaje(ultimo.sitios.some((s) => !s.ok)
         ? 'No encontré resultados, y algunas tiendas no respondieron. Probá de nuevo en un rato.'
         : 'No encontré ese producto en ninguna tienda. Probá con menos palabras o con la marca.');
+      $('masResultados').hidden = true;
       return;
     }
-    $('resultados').replaceChildren(...grupos.map((g) => tarjeta(g, nombres)));
+    $('resultados').replaceChildren(...grupos.slice(0, mostrando).map((g) => tarjeta(g, nombres)));
+    const faltan = grupos.length - mostrando;
+    $('masResultados').hidden = faltan <= 0;
+    $('masResultados').textContent = `Mostrar más (${faltan} productos más)`;
   }
+  $('masResultados').addEventListener('click', () => { mostrando += POR_PAGINA; mostrar(); });
 
   function aviso(texto) {
     $('aviso').textContent = texto || '';
@@ -323,9 +370,11 @@
     $('filtro').hidden = true;
     $('ayuda').hidden = true;
     tiendaElegida = null;
+    mostrando = POR_PAGINA;
+    $('masResultados').hidden = true;
     mensaje('Consultando las tiendas…');
     try {
-      const respuesta = await fetch('/api/buscar?q=' + encodeURIComponent(consulta));
+      const respuesta = await fetch('/api/buscar?q=' + encodeURIComponent(consulta) + (rubroElegido ? '&rubros=' + rubroElegido : ''));
       const datos = await respuesta.json();
       if (!respuesta.ok) throw new Error(datos.error);
       ultimo = datos;

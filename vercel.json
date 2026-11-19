@@ -1,5 +1,6 @@
 {
   "functions": {
+    "api/buscar.js": { "maxDuration": 30 },
     "api/chat.js": { "maxDuration": 60 },
     "api/foto.js": { "maxDuration": 60 }
   }

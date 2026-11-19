@@ -72,3 +72,26 @@ test('un código que ninguna tienda tiene devuelve cero resultados', async () =>
   assert.strictEqual(r.grupos.length, 0);
   assert.strictEqual(r.codigo, '7790000000017');
 });
+
+test('"zapatillas" encuentra "Zapatilla" y "botines" encuentra "Botín"', async () => {
+  const r = await comparar('zapatillas', [sitio('a', [producto('a', 'Zapatilla Topper Boris', '', 100), producto('a', 'Remera Topper', '', 50)])]);
+  assert.deepStrictEqual(r.grupos.map((g) => g.nombre), ['Zapatilla Topper Boris']);
+  const b = await comparar('botines', [sitio('a', [producto('a', 'Botín Nike Phantom', '', 100)])]);
+  assert.strictEqual(b.grupos.length, 1);
+});
+
+test('une productos con talles si comparten el código de algún talle', async () => {
+  const r = await comparar('campus', [
+    sitio('a', [producto('a', 'Zapatillas adidas Campus 00s', '4067906317287', 129999, { eans: ['4067906317287', '4067906317294'] })]),
+    sitio('b', [producto('b', 'Zapatilla Adidas Campus 00s Niño', '4067906317294', 119999, { eans: ['4067906317294', '4067906317300'] })]),
+  ]);
+  assert.strictEqual(r.grupos.length, 1);
+  assert.deepStrictEqual(r.grupos[0].ofertas.map((o) => o.sitio), ['b', 'a']);
+});
+
+test('con muchas coincidencias completas se descartan las parciales', async () => {
+  const completas = Array.from({ length: 10 }, (_, i) => producto('a', `Zapatilla Campus ${i}`, '', 100 + i));
+  const r = await comparar('zapatilla campus', [sitio('a', [...completas, producto('a', 'Zapatilla Superstar', '', 50)])]);
+  assert.strictEqual(r.grupos.length, 10);
+  assert.ok(r.grupos.every((g) => /campus/i.test(g.nombre)));
+});
