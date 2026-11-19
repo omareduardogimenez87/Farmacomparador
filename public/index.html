@@ -113,6 +113,11 @@
     margin: 8px 0 0; padding: 4px 16px calc(16px + env(safe-area-inset-bottom)); text-align: center; color: var(--suave);
   }
   .firma p { margin: 0; }
+  .firma-prueba { margin-bottom: 8px !important; font-size: .78rem; }
+  .beta {
+    display: inline-block; margin-left: 6px; padding: 2px 8px; border-radius: 999px; vertical-align: 3px;
+    font-size: .68rem; font-weight: 700; letter-spacing: .02em; color: var(--marca); border: 1px solid var(--marca);
+  }
   .firma-marca { font-size: 1.05rem; font-weight: 700; letter-spacing: .12em; opacity: .45; user-select: none; }
   .firma-credito { margin-top: 4px !important; font-size: .78rem; opacity: .8; }
   .clave { display: flex; gap: 8px; }
@@ -121,7 +126,7 @@
 </head>
 <body>
 <header>
-  <h1>Seco y furioso</h1>
+  <h1>Seco y furioso <span class="beta">Versión de prueba</span></h1>
   <div class="pestanas" role="tablist">
     <button id="pestanaBuscar" type="button" role="tab" aria-selected="true" aria-controls="vistaBuscar">Buscar</button>
     <button id="pestanaAsistente" type="button" role="tab" aria-selected="false" aria-controls="vistaAsistente">Asistente</button>
@@ -158,6 +163,7 @@
   </form>
 </main>
 <div class="firma">
+  <p class="firma-prueba">App en fase de prueba: los precios pueden tener errores o no coincidir con los de tu sucursal. Confirmá en la tienda antes de comprar.</p>
   <p class="firma-marca">EduApp</p>
   <p class="firma-credito">Realizado y desarrollado por Omar Eduardo Giménez, con la ayuda de Claude.</p>
 </div>
