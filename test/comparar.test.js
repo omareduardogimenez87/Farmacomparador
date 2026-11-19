@@ -173,3 +173,9 @@ test('"men" no coincide dentro de otras palabras', async () => {
   const r = await comparar('remera hombre', [sitio('a', [producto('a', 'Remera Complemento Mujer', '', 100), producto('a', 'Remera Basic Men', '', 200)])]);
   assert.deepStrictEqual(r.grupos.map((g) => g.nombre), ['Remera Basic Men']);
 });
+
+test('"dama" también encuentra fem, femme, woman y women', async () => {
+  const nombres = ['Remera Fem Basic', 'Remera Femme Selena', 'Remera Woman Classic', "Remera Women's Run", 'Remera Femenina', 'Remera Hombre'];
+  const r = await comparar('remera dama', [sitio('a', nombres.map((n, i) => producto('a', n, '', 100 + i)))]);
+  assert.deepStrictEqual(r.grupos.map((g) => g.nombre).sort(), nombres.slice(0, 5).sort());
+});
