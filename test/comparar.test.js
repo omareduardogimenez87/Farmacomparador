@@ -118,3 +118,26 @@ test('una promo por cantidad más barata gana el primer lugar', async () => {
   assert.strictEqual(r.grupos[0].nombre, 'Shampoo Fructis 350');
   assert.deepStrictEqual(r.grupos[0].ofertas.map((o) => [o.sitio, o.precioFinal]), [['a', 6060], ['b', 8000]]);
 });
+
+test('"1 litro" coincide con "1 L", "1lt", "1 lts" y "1000 ml", pero no con "1,5 L"', async () => {
+  const nombres = ['Leche Entera Casanto 1 L', 'Leche Check 1lt', 'Leche Tregar 1 Lts', 'Leche Ilolay 1000 ml', 'Leche Grande 1,5 L'];
+  const r = await comparar('leche 1 litro', [sitio('a', nombres.map((n, i) => producto('a', n, '', 1000 + i)))]);
+  assert.deepStrictEqual(r.grupos.map((g) => g.nombre).sort(), nombres.slice(0, 4).sort());
+});
+
+test('primero los productos cuyo nombre empieza con lo buscado, y después por precio', async () => {
+  const r = await comparar('leche', [sitio('a', [
+    producto('a', 'Alfajor Con Dulce De Leche', '', 559),
+    producto('a', 'Leche Descremada Check 1l', '', 1899),
+    producto('a', 'Leche Entera Casanto 1 L', '', 1785),
+  ])]);
+  assert.deepStrictEqual(r.grupos.map((g) => g.nombre), ['Leche Entera Casanto 1 L', 'Leche Descremada Check 1l', 'Alfajor Con Dulce De Leche']);
+});
+
+test('con varias palabras manda el precio aunque la marca vaya primero en el nombre', async () => {
+  const r = await comparar('ibuprofeno 400', [sitio('a', [
+    producto('a', 'Ibuprofeno Fabogesic 400 mg', '', 2500),
+    producto('a', 'Ibu 400 Ibuprofeno 400 mg', '', 1610),
+  ])]);
+  assert.deepStrictEqual(r.grupos.map((g) => g.precioMinimo), [1610, 2500]);
+});
