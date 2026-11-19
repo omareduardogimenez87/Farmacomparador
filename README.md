@@ -67,7 +67,7 @@ La pestaña **Tiendas** muestra la confianza de cada tienda, del 1 al 10, con un
 - **Micrófono**: buscar o preguntar hablando. Usa el reconocimiento de voz del navegador, sin costo.
 - **Cámara**: se saca una foto del producto. Si se ve el código de barras, el celular lo lee al instante (Chrome en Android). Si no, la IA reconoce el producto en la foto.
 - **Asistente**: un chat con la IA de Claude que consulta las tiendas y responde, por escrito o en voz alta.
-- **Promos**: descuentos, reintegros y cuotas por día de la semana, con filtro por banco o tarjeta. Se leen de las páginas oficiales de La Anónima y Farmacity; para Vea y MásOnline hay un enlace a su página, porque sus promos se cargan de una forma que la app no puede leer. No usa IA y no tiene costo. No hay cupones: las tiendas no los publican en un lugar que se pueda leer.
+- **Promos**: descuentos, reintegros y cuotas por día de la semana, con filtro por banco o tarjeta. Solo muestra las que valen en Santiago del Estero: oculta las que nombran otras provincias o ciudades sin incluir a Santiago, y las de bancos provinciales de otras provincias. Se leen de las páginas oficiales de La Anónima y Farmacity; para Vea y MásOnline hay un enlace a su página, porque sus promos se cargan de una forma que la app no puede leer. No usa IA y no tiene costo. No hay cupones: las tiendas no los publican en un lugar que se pueda leer.
 - **Logos** de cada tienda, descargados de su propio sitio y guardados en `public/logos/`.
 
 ## Activar la inteligencia artificial

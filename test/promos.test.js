@@ -27,6 +27,25 @@ test('lee la lista de promociones de Farmacity', () => {
   assert.deepStrictEqual(promo.dias, [3]);
 });
 
+test('muestra solo las promos que valen en Santiago del Estero', () => {
+  const { valeEnSantiago } = require('../lib/promos');
+  const p = (titulo, detalle = '') => valeEnSantiago({ titulo, detalle });
+  // Valen en Santiago
+  assert.ok(p('20% de reintegro pagando con MODO', 'Promoción válida en todas las sucursales del pais.'));
+  assert.ok(p('Martes 20% con Banco Columbia', 'Promoción válida en todas las sucursales físicas en del país.'));
+  assert.ok(p('3 cuotas con Credimas', 'sucursales físicas ubicada en: Salta, Tucumán, Santiago del Estero.'));
+  assert.ok(p('Naranja', 'Especial Sgo +La Rioja+Formosa - Lunes 10% de descuento'));
+  assert.ok(p('Martes 25% con Banco Hipotecario MODO', 'Promoción válida en todas las sucursales físicas desde el 01/09/26.'));
+  // No valen en Santiago
+  assert.ok(!p('Viernes 30% de reintegro con Banco Santa Cruz MODO', 'Tope $18.000.'));
+  assert.ok(!p('30% con Banco Santa Fe MODO', 'Viernes y Sábado en Sucursales de la Pcia de Santa Fe.'));
+  assert.ok(!p('CORDOBA · VISA · Banco de Córdoba (online)', 'Lunes 30% de descuento. TIENDA ON LINE Y SUCURSALES'));
+  assert.ok(!p('Lunes 15% con Mercado Pago', 'Promoción válida en todas las sucursales físicas en las regiones: La pampa- Buenos aires - Santa fe'));
+  assert.ok(!p('Jueves 20% con ICBC MODO', 'Promoción válida en todas las sucursales físicas sólo para Rio Gallegos- Laboulaye'));
+  assert.ok(!p('3 CSI con Favacard', 'Promoción válida en todas las sucursales físicas en: Trenque Lauquen - Azul.'));
+  assert.ok(!p('Miércoles 10% con cuenta DNI', 'Tope $5000.'));
+});
+
 test('reconoce promos por cantidad en los nombres de colecciones', () => {
   const { unidadesDePromo } = require('../lib/plataformas');
   assert.strictEqual(unidadesDePromo('Ofertas 2x1'), 2);
