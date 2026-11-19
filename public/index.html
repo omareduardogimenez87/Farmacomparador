@@ -131,6 +131,13 @@
   .sin-resultados { font-size: .78rem; color: var(--suave); align-self: center; }
   .mas-resultados { display: block; width: 100%; margin: 4px 0 12px; background: var(--tarjeta); color: var(--marca); border: 1px solid var(--borde); }
 
+  /* Preguntas para afinar, como un vendedor de mostrador */
+  .preguntas { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 14px; padding: 10px 12px; margin-bottom: 12px; }
+  .preguntas > p { margin: 0 0 6px; font-weight: 600; }
+  .pregunta { margin: 8px 0 0; }
+  .pregunta span { display: block; font-size: .85rem; color: var(--suave); margin-bottom: 4px; }
+  .pregunta .sitios { margin: 0; }
+
   /* Promociones */
   .buscador-promos { width: 100%; margin: 0 0 12px; padding: 10px 12px; font: inherit; color: var(--texto); background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 10px; }
   .grupo-promos { margin: 14px 0 8px; font-size: .95rem; color: var(--suave); }
@@ -182,6 +189,7 @@
   <div id="sitios" class="sitios"></div>
   <p id="ayuda" class="ayuda" hidden>Tocá una tienda para ver solo sus productos.</p>
   <label id="filtro" class="filtro" hidden><input id="soloComparables" type="checkbox"> Mostrar solo productos que están en 2 o más tiendas</label>
+  <div id="preguntas" class="preguntas" hidden></div>
   <div id="resultados"><p class="mensaje">Escribí un producto y te muestro el precio en cada tienda. Elegí un rubro para buscar más rápido.</p></div>
   <button id="masResultados" class="mas-resultados" type="button" hidden>Mostrar más</button>
   <footer>Los precios son los publicados en la web de cada tienda al momento de buscar. Pueden no incluir promociones bancarias, de obra social ni del tipo 2x1. Los logos pertenecen a cada tienda.</footer>
@@ -195,7 +203,7 @@
 </main>
 <main id="vistaAsistente" role="tabpanel" hidden>
   <div id="chat" class="chat">
-    <div class="burbuja asistente">¡Hola! Preguntame por precios o promociones, por ejemplo: "¿Dónde está más barata la yerba Playadito de 1 kilo?" o "¿Qué día conviene comprar en La Anónima?". Podés escribir o tocar el micrófono y hablar.</div>
+    <div class="burbuja asistente">¡Hola! ¿Qué estás buscando? Contámelo como se lo pedirías a un vendedor, por ejemplo "leche descremada de 1 litro" o "zapatillas para correr de hombre talle 42", y te busco dónde sale más barato. Si me falta algún dato, te pregunto. Podés escribir o tocar el micrófono y hablar.</div>
   </div>
   <form id="formClave" class="clave" hidden>
     <input id="clave" type="password" placeholder="Clave del asistente" aria-label="Clave del asistente" autocomplete="current-password">
@@ -332,8 +340,35 @@
   const POR_PAGINA = 30;
   let mostrando = POR_PAGINA;
 
+  // Preguntas para afinar la búsqueda: tocar una opción la suma a lo que se buscó.
+  function mostrarPreguntas() {
+    const preguntas = (ultimo && ultimo.preguntas) || [];
+    $('preguntas').hidden = !preguntas.length || Boolean(tiendaElegida);
+    if (!preguntas.length) return $('preguntas').replaceChildren();
+    $('preguntas').replaceChildren(
+      crear('p', null, 'Para encontrarte lo más barato, contame un poco más:'),
+      ...preguntas.map((p) => {
+        const bloque = crear('div', 'pregunta');
+        const opciones = crear('div', 'sitios');
+        for (const o of p.opciones) {
+          const boton = crear('button', 'sitio', o.texto);
+          boton.type = 'button';
+          boton.addEventListener('click', () => {
+            const consulta = `${$('consulta').value.trim()} ${o.agregar}`.trim();
+            $('consulta').value = consulta;
+            $('formulario').requestSubmit();
+          });
+          opciones.append(boton);
+        }
+        bloque.append(crear('span', null, p.pregunta), opciones);
+        return bloque;
+      })
+    );
+  }
+
   function mostrar() {
     if (!ultimo) return;
+    mostrarPreguntas();
     const nombres = Object.fromEntries(ultimo.sitios.map((s) => [s.id, s.nombre]));
     // Solo se muestran las tiendas que encontraron algo (o que fallaron), para no llenar la pantalla.
     const visibles = ultimo.sitios.filter((s) => !s.ok || s.cantidad > 0 || s.id === tiendaElegida);
@@ -388,6 +423,7 @@
     $('sitios').replaceChildren();
     $('filtro').hidden = true;
     $('ayuda').hidden = true;
+    $('preguntas').hidden = true;
     tiendaElegida = null;
     mostrando = POR_PAGINA;
     $('masResultados').hidden = true;

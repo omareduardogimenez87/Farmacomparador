@@ -179,3 +179,22 @@ test('"dama" también encuentra fem, femme, woman y women', async () => {
   const r = await comparar('remera dama', [sitio('a', nombres.map((n, i) => producto('a', n, '', 100 + i)))]);
   assert.deepStrictEqual(r.grupos.map((g) => g.nombre).sort(), nombres.slice(0, 5).sort());
 });
+
+test('sugiere preguntas para afinar una búsqueda amplia', async () => {
+  const nombres = [
+    'Leche Entera La Serenisima 1 L', 'Leche Descremada La Serenisima 1 L', 'Leche Entera Ilolay 1 L',
+    'Leche Descremada Ilolay 500 ml', 'Leche Entera Tregar 500 ml', 'Leche Descremada Tregar 1 L',
+    'Leche Entera Check 1 L', 'Leche Descremada Check 500 ml',
+  ];
+  const marcas = ['La Serenisima', 'La Serenisima', 'Ilolay', 'Ilolay', 'Tregar', 'Tregar', 'Check', 'Check'];
+  const r = await comparar('leche', [sitio('a', nombres.map((n, i) => producto('a', n, '', 1000 + i, { marca: marcas[i] })))]);
+  const porPregunta = Object.fromEntries(r.preguntas.map((p) => [p.pregunta, p.opciones.map((o) => o.texto)]));
+  assert.deepStrictEqual(porPregunta['¿Qué presentación?'].sort(), ['1 l', '500 ml']);
+  assert.deepStrictEqual(porPregunta['¿De qué tipo?'].sort(), ['Descremada', 'Entera']);
+  assert.ok(porPregunta['¿Alguna marca en especial?'].length >= 2);
+});
+
+test('no pregunta cuando hay pocos resultados', async () => {
+  const r = await comparar('leche entera', [sitio('a', [producto('a', 'Leche Entera 1 L', '', 1000)])]);
+  assert.deepStrictEqual(r.preguntas, []);
+});
