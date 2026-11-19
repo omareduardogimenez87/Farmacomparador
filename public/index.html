@@ -397,6 +397,10 @@
       const datos = await respuesta.json();
       if (!respuesta.ok) throw new Error(datos.error);
       ultimo = datos;
+      const avisos = [];
+      if (datos.talle) avisos.push(`Solo productos con talle ${datos.talle} disponible. Las tiendas que no informan los talles no aparecen.`);
+      if (datos.parciales) avisos.push('No encontré productos con todo lo que pediste: te muestro los más parecidos.');
+      if (avisos.length) aviso(avisos.join(' '));
       if (datos.codigo) {
         aviso(datos.nombre ? `Código ${datos.codigo}: ${datos.nombre}` : `No encontré el código ${datos.codigo} en las tiendas que lo publican. Probá con una foto del producto o escribí su nombre.`);
       }

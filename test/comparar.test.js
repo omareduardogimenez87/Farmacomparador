@@ -16,7 +16,7 @@ test('une el mismo código de barras entre farmacias y ordena por precio', async
   assert.deepStrictEqual(r.grupos[0].ofertas.map((o) => [o.sitio, o.precio]), [['b', 5064], ['a', 8440]]);
 });
 
-test('descarta lo que no coincide y deja al final las coincidencias parciales', async () => {
+test('si hay coincidencias completas, no muestra las parciales', async () => {
   const r = await comparar('ibuprofeno 400', [
     sitio('a', [
       producto('a', 'Esmalte de uñas 8 ml', '7891182035989', 4850),
@@ -25,7 +25,14 @@ test('descarta lo que no coincide y deja al final las coincidencias parciales', 
       producto('a', 'Ibuprofeno 400 x 20', '7798420160383', 5570),
     ]),
   ]);
-  assert.deepStrictEqual(r.grupos.map((g) => g.nombre), ['Ibuprofeno 400 x 20', 'Actron Rápida Acción 400 mg']);
+  assert.deepStrictEqual(r.grupos.map((g) => g.nombre), ['Ibuprofeno 400 x 20']);
+  assert.strictEqual(r.parciales, false);
+});
+
+test('sin coincidencias completas muestra las parciales y lo avisa', async () => {
+  const r = await comparar('ibuprofeno 400', [sitio('a', [producto('a', 'Actron Rápida Acción 400 mg', '7793640992769', 8440)])]);
+  assert.deepStrictEqual(r.grupos.map((g) => g.nombre), ['Actron Rápida Acción 400 mg']);
+  assert.strictEqual(r.parciales, true);
 });
 
 test('con una sola palabra no acepta productos que no la contienen', async () => {
@@ -140,4 +147,29 @@ test('con varias palabras manda el precio aunque la marca vaya primero en el nom
     producto('a', 'Ibu 400 Ibuprofeno 400 mg', '', 1610),
   ])]);
   assert.deepStrictEqual(r.grupos.map((g) => g.precioMinimo), [1610, 2500]);
+});
+
+test('"remera de dama" encuentra remeras de mujer y no soquetes ni remeras de niña', async () => {
+  const r = await comparar('remera de dama', [sitio('a', [
+    producto('a', 'Soquete 361 Dama Flat Socks', '', 6220),
+    producto('a', 'Remera Topper Basic Girls Niña', '', 12499),
+    producto('a', 'Remera adidas Climacool De Mujer', '', 30000),
+    producto('a', 'Remera Basic', '', 20000, { palabrasClave: 'Indumentaria Remeras Mujer' }),
+  ])]);
+  assert.deepStrictEqual(r.grupos.map((g) => g.nombre), ['Remera Basic', 'Remera adidas Climacool De Mujer']);
+});
+
+test('con talle muestra solo productos que tienen ese talle con stock', async () => {
+  const r = await comparar('remera mujer talle s', [sitio('a', [
+    producto('a', 'Remera Mujer Uno', '', 100, { talles: ['M', 'L'] }),
+    producto('a', 'Remera Mujer Dos', '', 200, { talles: ['XS', 'S'] }),
+    producto('a', 'Remera Mujer Tres', '', 50),
+  ])]);
+  assert.strictEqual(r.talle, 'S');
+  assert.deepStrictEqual(r.grupos.map((g) => g.nombre), ['Remera Mujer Dos']);
+});
+
+test('"men" no coincide dentro de otras palabras', async () => {
+  const r = await comparar('remera hombre', [sitio('a', [producto('a', 'Remera Complemento Mujer', '', 100), producto('a', 'Remera Basic Men', '', 200)])]);
+  assert.deepStrictEqual(r.grupos.map((g) => g.nombre), ['Remera Basic Men']);
 });
