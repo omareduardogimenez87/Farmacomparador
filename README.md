@@ -36,6 +36,7 @@ App para el celular que busca un producto y muestra el precio en varias farmacia
 - **Micrófono**: buscar o preguntar hablando. Usa el reconocimiento de voz del navegador, sin costo.
 - **Cámara**: se saca una foto del producto. Si se ve el código de barras, el celular lo lee al instante (Chrome en Android). Si no, la IA reconoce el producto en la foto.
 - **Asistente**: un chat con la IA de Claude que consulta las tiendas y responde, por escrito o en voz alta.
+- **Promos**: descuentos, reintegros y cuotas por día de la semana, con filtro por banco o tarjeta. Se leen de las páginas oficiales de La Anónima y Farmacity; para Vea y MásOnline hay un enlace a su página, porque sus promos se cargan de una forma que la app no puede leer. No usa IA y no tiene costo. No hay cupones: las tiendas no los publican en un lugar que se pueda leer.
 - **Logos** de cada tienda, descargados de su propio sitio y guardados en `public/logos/`.
 
 ## Activar la inteligencia artificial
@@ -77,6 +78,7 @@ La app necesita un servidor: el navegador del celular no puede consultar directa
 - `public/index.html`: la pantalla que se ve en el celular.
 - `api/buscar.js`: recibe la búsqueda de la pantalla y devuelve los resultados.
 - `lib/sitios.js`: un bloque por tienda, que sabe cómo consultarla. Para sumar una tienda se agrega acá.
+- `lib/promos.js`: lee las promociones bancarias de las tiendas y detecta qué días valen.
 - `lib/comparar.js`: filtra resultados que no corresponden, agrupa por código de barras y busca por código.
 - `lib/ia.js`: el asistente y el reconocimiento de fotos con Claude.
 - `api/chat.js` y `api/foto.js`: reciben los pedidos de la IA desde la pantalla.

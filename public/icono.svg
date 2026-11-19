@@ -1,4 +1,33 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <title>Seco y furioso</title>
+  <!-- Fondo -->
   <rect width="512" height="512" rx="112" fill="#0f6b5c"/>
-  <path d="M216 120h80v96h96v80h-96v96h-80v-96h-96v-80h96z" fill="#fff"/>
+
+  <!-- Bandera pirata sobre el lomo del chanchito -->
+  <line x1="212" y1="190" x2="212" y2="58" stroke="#3b2a1a" stroke-width="10" stroke-linecap="round"/>
+  <path d="M217 62 L318 62 Q300 90 318 118 L217 118 Z" fill="#111"/>
+  <circle cx="262" cy="84" r="13" fill="#fff"/>
+  <rect x="255" y="93" width="14" height="8" rx="2" fill="#fff"/>
+  <path d="M243 104 L281 116 M281 104 L243 116" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
+
+  <!-- Chanchito alcancía -->
+  <path d="M128 300 q-34 -6 -38 -34" fill="none" stroke="#e98aa3" stroke-width="10" stroke-linecap="round"/>
+  <rect x="170" y="370" width="38" height="56" rx="14" fill="#e98aa3"/>
+  <rect x="300" y="370" width="38" height="56" rx="14" fill="#e98aa3"/>
+  <path d="M300 196 l18 -54 l40 46 z" fill="#e98aa3"/>
+  <ellipse cx="262" cy="292" rx="146" ry="112" fill="#f6b3c4"/>
+  <path d="M308 200 l14 -40 l30 36 z" fill="#f6b3c4"/>
+  <ellipse cx="404" cy="300" rx="38" ry="34" fill="#e98aa3"/>
+  <ellipse cx="392" cy="298" rx="7" ry="10" fill="#b4546e"/>
+  <ellipse cx="416" cy="298" rx="7" ry="10" fill="#b4546e"/>
+  <!-- Ranura para las monedas -->
+  <rect x="226" y="194" width="72" height="14" rx="7" fill="#b4546e"/>
+  <!-- Parche de pirata -->
+  <path d="M268 210 L398 262" stroke="#111" stroke-width="7" stroke-linecap="round"/>
+  <ellipse cx="350" cy="250" rx="26" ry="22" fill="#111"/>
+
+  <!-- Lupa con el signo pesos -->
+  <line x1="122" y1="412" x2="64" y2="470" stroke="#3b2a1a" stroke-width="26" stroke-linecap="round"/>
+  <circle cx="160" cy="372" r="74" fill="#ffffff" stroke="#f2c14e" stroke-width="18"/>
+  <text x="160" y="372" text-anchor="middle" dominant-baseline="central" font-family="Arial, Helvetica, sans-serif" font-size="108" font-weight="700" fill="#0f6b5c">$</text>
 </svg>
