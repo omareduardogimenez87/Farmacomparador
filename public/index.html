@@ -110,9 +110,11 @@
   .opcion input { width: 20px; height: 20px; accent-color: var(--marca); }
   /* Marca de agua al pie de la página */
   .firma {
-    margin: 8px 0 0; padding: 4px 16px calc(16px + env(safe-area-inset-bottom)); text-align: center;
-    font-size: 1.05rem; font-weight: 700; letter-spacing: .12em; color: var(--suave); opacity: .45; user-select: none;
+    margin: 8px 0 0; padding: 4px 16px calc(16px + env(safe-area-inset-bottom)); text-align: center; color: var(--suave);
   }
+  .firma p { margin: 0; }
+  .firma-marca { font-size: 1.05rem; font-weight: 700; letter-spacing: .12em; opacity: .45; user-select: none; }
+  .firma-credito { margin-top: 4px !important; font-size: .78rem; opacity: .8; }
   .clave { display: flex; gap: 8px; }
   .clave input { flex: 1; min-width: 0; padding: 10px 12px; font: inherit; color: var(--texto); background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 10px; }
 </style>
@@ -155,7 +157,10 @@
     <button id="enviar" class="icono" type="submit" aria-label="Enviar"></button>
   </form>
 </main>
-<p class="firma" aria-label="Hecho por EduApp">EduApp</p>
+<div class="firma">
+  <p class="firma-marca">EduApp</p>
+  <p class="firma-credito">Realizado y desarrollado por Omar Eduardo Giménez, con la ayuda de Claude.</p>
+</div>
 <script>
   const pesos = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 });
   const $ = (id) => document.getElementById(id);
