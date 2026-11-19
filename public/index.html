@@ -228,7 +228,7 @@
   <footer>Los precios son los publicados en la web de cada tienda al momento de buscar. Pueden no incluir promociones bancarias, de obra social ni del tipo 2x1. Los logos pertenecen a cada tienda.</footer>
 </main>
 <main id="vistaPromos" role="tabpanel" hidden>
-  <p class="ayuda">Descuentos, reintegros y cuotas que publica cada tienda. Elegí el día para ver qué conviene.</p>
+  <p class="ayuda">Descuentos, reintegros y cuotas que publica cada tienda, <strong>solo las que valen en Santiago del Estero</strong>. Elegí el día para ver qué conviene.</p>
   <div id="diasPromo" class="sitios" role="group" aria-label="Día de la semana"></div>
   <input id="filtroPromo" class="buscador-promos" type="search" placeholder="Filtrar por banco o tarjeta" aria-label="Filtrar promociones por banco o tarjeta" autocomplete="off">
   <div id="listaPromos"><p class="mensaje">Cargando promociones…</p></div>
@@ -725,8 +725,10 @@
       enlace.append(logo(t.id), `Ver las promos de ${t.nombre} en su web`);
       return enlace;
     });
+    const ocultas = promos.tiendas.reduce((suma, t) => suma + (t.deOtrasZonas || 0), 0);
     $('otrasPromos').replaceChildren(...(enlaces.length ? [crear('h2', 'grupo-promos', 'Otras tiendas'), ...enlaces] : []),
-      crear('p', 'ayuda', 'Leé siempre las condiciones: muchas promociones valen solo en algunas sucursales o ciudades, solo online, o tienen tope de reintegro.'));
+      ...(ocultas ? [crear('p', 'ayuda', `Se ocultaron ${ocultas} promociones que valen solo en otras provincias o con bancos de otras provincias.`)] : []),
+      crear('p', 'ayuda', 'Leé siempre las condiciones: algunas promociones valen solo online, en ciertas sucursales o tienen tope de reintegro.'));
   }
   $('filtroPromo').addEventListener('input', mostrarPromos);
 
