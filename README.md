@@ -32,7 +32,8 @@ App para el celular que busca un producto y muestra el precio en varias farmacia
 | Farmar | Su buscador exige una credencial de acceso |
 | L'Oréal Paris | El sitio no publica precios |
 | Elit | Hay que darse de alta como cliente para ver precios |
-| Matana, Extracto Importado | Su buscador no se pudo leer de forma automática |
+| Matana, Extracto Importado | Cargan sus productos de una forma que la app todavía no puede leer |
+| Pachos | Vende por Mercado Libre, que rechaza las consultas automáticas |
 
 Las tiendas se consultan por plataforma (`lib/plataformas.js`): VTEX, Shopify, Tiendanube, Magento, Salesforce, WooCommerce, PrestaShop y Odoo. Para sumar una tienda de esas plataformas alcanza con agregar una línea en `lib/sitios.js`.
 
@@ -42,7 +43,7 @@ Las tiendas se consultan por plataforma (`lib/plataformas.js`): VTEX, Shopify, T
 - Si dos tiendas publican el **mismo código de barras (EAN)**, la app los junta en una sola tarjeta y marca el más barato. Es la única forma confiable de saber que es exactamente el mismo producto.
 - Lo que no se puede emparejar por código (por ejemplo, todo ENA Sport y La Anónima) aparece en una tarjeta propia.
 - Tocando la etiqueta de una tienda se ven solo sus productos.
-- MásOnline, Vea y La Anónima pueden tener precios distintos según la sucursal o la zona. La app muestra el precio que cada sitio muestra por defecto, sin elegir sucursal.
+- MásOnline (envía a domicilio en Santiago y tiene retiro en tienda), Vea y La Anónima pueden tener precios distintos según la sucursal o la zona. La app muestra el precio que cada sitio muestra por defecto, sin elegir sucursal.
 - Los precios son los publicados en la web. No incluyen promociones bancarias, de obra social ni del tipo 2x1 o "segunda unidad".
 
 ## Guía de reputación
