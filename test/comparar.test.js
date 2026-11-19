@@ -95,3 +95,8 @@ test('con muchas coincidencias completas se descartan las parciales', async () =
   assert.strictEqual(r.grupos.length, 10);
   assert.ok(r.grupos.every((g) => /campus/i.test(g.nombre)));
 });
+
+test('usa las palabras de la dirección del producto cuando el nombre no dice qué es', async () => {
+  const r = await comparar('zapatillas', [sitio('a', [producto('a', '1300 Waterproof 4E', '', 164849, { url: 'https://www.newbalance.com.ar/hombre-zapatillas-N1T000045080031.html' })])]);
+  assert.strictEqual(r.grupos.length, 1);
+});
