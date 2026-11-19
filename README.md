@@ -8,15 +8,17 @@ App para el celular que busca un producto y muestra el precio en varias farmacia
 
 ## Tiendas incluidas
 
-55 tiendas, agrupadas por rubro. Se puede buscar en todas o en un solo rubro.
+71 tiendas, agrupadas por rubro. Se puede buscar en todas o en un solo rubro.
 
 | Rubro | Tiendas |
 | --- | --- |
-| Farmacias | La Esquina, Farmacity, Farmalife, Farmaonline |
+| Farmacias | La Esquina, Farmacity, Farmalife, Farmaonline, Farmacias Selma, Farmacia Leloir |
 | Supermercados | MásOnline, Vea, La Anónima |
-| Deportes y marcas | ENA Sport, Puma, Topper, Fila, Reebok, Under Armour, Saucony, Crocs, Columbia, DC Shoes, Kappa, Decathlon, Atomik, Asics, New Balance, Dexter, Stock Center, Moov, Sporting, Ferreira Sport, Woker, Séptimo Store, New Sport, Fuencarral, Cero26, Mateu Sports, Rossetti, Solo Deportes, Sportline, Marathon, Victoria Deportes, Vandalia, Somos Deportes |
+| Deportes y marcas | Punto Deportivo, Mc Center Deportes, Kavak Deportes, ENA Sport, Puma, Topper, Fila, Reebok, Under Armour, Saucony, Crocs, Columbia, DC Shoes, Kappa, Decathlon, Atomik, Asics, New Balance, Dexter, Stock Center, Moov, Sporting, Ferreira Sport, Woker, Séptimo Store, New Sport, Fuencarral, Cero26, Mateu Sports, Rossetti, Solo Deportes, Sportline, Marathon, Victoria Deportes, Vandalia, Somos Deportes |
 | Calzado y moda | Grid, Solo Urbano, Paco García, Indonesia Shop, Vallejo Calzados, Aurelius, Go Store, 47 Street, Cuesta Blanca, Mimo & Co, Briganti, Tejano, Burgues, Anation |
+| Perfumería y cosmética | Juleriaque, Rouge, Pigmento, L'Occitane, Beauty24, Todoperfumes (NO ORIGINAL: inspirado en), Mixperfume (decants) |
 | Bazar y juguetería | Las Mil Novedades (precios mayoristas; compra online mínima de $80.000) |
+| Mayoristas | Ximaro (mín. 10 productos), Somostec (mínimo a consultar), Encanto Importaciones (mín. $100.000 con IVA), Megamix (mín. $400.000) |
 
 **No incluidas:**
 
@@ -24,11 +26,16 @@ App para el celular que busca un producto y muestra el precio en varias farmacia
 | --- | --- |
 | Nike, adidas, Capaccioni | Tienen protección contra programas automáticos (Cloudflare o Akamai) |
 | Grimoldi, Vans, Muni Depot | Usan buscadores propios que la app no puede leer |
+| Natura en Mercado Libre | Mercado Libre rechaza las consultas automáticas (error 403) |
+| Dermaglós | Su sitio es institucional: no vende ni publica precios (sus productos están en las farmacias) |
 | Diarco | Su web no publica precios, y sus ofertas son folletos en imagen |
 | Farmar | Su buscador exige una credencial de acceso |
 | L'Oréal Paris | El sitio no publica precios |
+| Elit | Hay que darse de alta como cliente para ver precios |
+| Matana, Extracto Importado | Cargan sus productos de una forma que la app todavía no puede leer |
+| Pachos | Vende por Mercado Libre, que rechaza las consultas automáticas |
 
-Las tiendas se consultan por plataforma (`lib/plataformas.js`): VTEX, Shopify, Tiendanube, Magento y Salesforce. Para sumar una tienda de esas plataformas alcanza con agregar una línea en `lib/sitios.js`.
+Las tiendas se consultan por plataforma (`lib/plataformas.js`): VTEX, Shopify, Tiendanube, Magento, Salesforce, WooCommerce, PrestaShop y Odoo. Para sumar una tienda de esas plataformas alcanza con agregar una línea en `lib/sitios.js`.
 
 ## Cómo compara
 
@@ -36,8 +43,23 @@ Las tiendas se consultan por plataforma (`lib/plataformas.js`): VTEX, Shopify, T
 - Si dos tiendas publican el **mismo código de barras (EAN)**, la app los junta en una sola tarjeta y marca el más barato. Es la única forma confiable de saber que es exactamente el mismo producto.
 - Lo que no se puede emparejar por código (por ejemplo, todo ENA Sport y La Anónima) aparece en una tarjeta propia.
 - Tocando la etiqueta de una tienda se ven solo sus productos.
-- MásOnline, Vea y La Anónima pueden tener precios distintos según la sucursal o la zona. La app muestra el precio que cada sitio muestra por defecto, sin elegir sucursal.
+- MásOnline (envía a domicilio en Santiago y tiene retiro en tienda), Vea y La Anónima pueden tener precios distintos según la sucursal o la zona. La app muestra el precio que cada sitio muestra por defecto, sin elegir sucursal.
 - Los precios son los publicados en la web. No incluyen promociones bancarias, de obra social ni del tipo 2x1 o "segunda unidad".
+
+## Guía de reputación
+
+La pestaña **Tiendas** muestra la confianza de cada tienda, del 1 al 10, con una barra de color (4 = rojo, 10 = verde) y el motivo del puntaje. El mismo puntaje aparece junto a cada precio en los resultados.
+
+- **Fuente de datos:** `public/reputacion-tiendas.json` (nombre, url, grupo, rubro, puntaje y motivo). La app no inventa puntajes: las tiendas que no están en ese archivo aparecen sin puntaje.
+- **Para vincular una tienda del buscador con la guía**, su nombre en `lib/sitios.js` tiene que coincidir con el de la guía, o indicarse con `{ reputacion: 'Nombre en la guía' }`.
+- **Criterio para tiendas nuevas:**
+  - 9-10: tienda o marca oficial, o cadena grande con envío al interior confirmado por escrito.
+  - 8: oficial con algún dato a confirmar, o mayorista con buenas reseñas verificables.
+  - 7: buena reputación sin señales de alerta, o cadena con reclamos en el promedio de su rubro.
+  - 6: confiable pero con poca información (sin reseñas online o web que no se pudo leer).
+  - 5: comprar con cuidado: baja resolución de reclamos u opiniones mixtas.
+  - Si un dato de reputación no está verificado, se le pregunta a Edu antes de asignar el puntaje.
+- Estimación con datos públicos al 19/11/2026, no es una calificación oficial.
 
 ## Funciones
 

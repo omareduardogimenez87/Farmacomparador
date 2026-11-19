@@ -131,6 +131,13 @@
   .sin-resultados { font-size: .78rem; color: var(--suave); align-self: center; }
   .mas-resultados { display: block; width: 100%; margin: 4px 0 12px; background: var(--tarjeta); color: var(--marca); border: 1px solid var(--borde); }
 
+  /* Preguntas para afinar, como un vendedor de mostrador */
+  .preguntas { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 14px; padding: 10px 12px; margin-bottom: 12px; }
+  .preguntas > p { margin: 0 0 6px; font-weight: 600; }
+  .pregunta { margin: 8px 0 0; }
+  .pregunta span { display: block; font-size: .85rem; color: var(--suave); margin-bottom: 4px; }
+  .pregunta .sitios { margin: 0; }
+
   /* Promociones */
   .buscador-promos { width: 100%; margin: 0 0 12px; padding: 10px 12px; font: inherit; color: var(--texto); background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 10px; }
   .grupo-promos { margin: 14px 0 8px; font-size: .95rem; color: var(--suave); }
@@ -141,6 +148,38 @@
   .promo summary { cursor: pointer; color: var(--marca); }
   .promo .dias { font-size: .78rem; font-weight: 600; color: var(--ahorro); margin: 0 0 4px; }
   .enlace-tienda { display: flex; align-items: center; gap: 8px; padding: 10px 12px; margin-bottom: 8px; border: 1px dashed var(--borde); border-radius: 12px; color: var(--marca); text-decoration: none; }
+
+  /* Guía de reputación */
+  .pestanas button { padding: 9px 4px; font-size: .9rem; }
+  .rep-title { font-size: 1.15rem; margin: 4px 0 6px; }
+  .rep-lede { color: var(--suave); margin: 0 0 12px; font-size: .9rem; }
+  .rep-legend { max-width: 420px; margin-bottom: 16px; }
+  .rep-legend-bar { height: 10px; border-radius: 5px; background: linear-gradient(90deg, hsl(0 70% 42%), hsl(60 70% 42%), hsl(120 70% 42%)); }
+  .rep-legend-labels { display: flex; justify-content: space-between; font-size: .75rem; color: var(--suave); margin-top: 4px; }
+  .rep-section { margin-top: 18px; }
+  .rep-h2 { font-size: 1rem; margin: 0 0 4px; }
+  .rep-list { position: relative; }
+  .rep-row { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(70px, 1fr) 2.2em 1.9em; align-items: center; gap: 10px; padding: 8px 2px; border-bottom: 1px solid var(--borde); cursor: pointer; }
+  .rep-row:focus-visible { outline: 2px solid var(--marca); outline-offset: 1px; }
+  .rep-name { font-weight: 600; color: var(--texto); text-decoration: none; }
+  .rep-name:hover { text-decoration: underline; }
+  .rep-rubro { font-size: .75rem; color: var(--suave); }
+  .rep-track { height: 9px; background: var(--borde); border-radius: 5px; overflow: hidden; }
+  .rep-fill { height: 100%; border-radius: 5px; }
+  .rep-score { font-variant-numeric: tabular-nums; text-align: right; font-weight: 700; }
+  .rep-info { width: 1.7em; height: 1.7em; border-radius: 50%; border: 1px solid var(--borde); background: var(--tarjeta); color: var(--suave); font: italic 12px Georgia, serif; padding: 0; }
+  .rep-tip { position: absolute; left: 0; z-index: 5; max-width: min(440px, 100%); background: var(--tarjeta); border: 1px solid var(--borde); box-shadow: 0 6px 20px rgba(0, 0, 0, .15); border-radius: 8px; padding: 8px 12px; font-size: .85rem; }
+  .rep-tip-title { font-weight: 700; margin-bottom: 4px; }
+  .rep-details { margin-top: 20px; font-size: .85rem; color: var(--suave); }
+  .rep-details summary { cursor: pointer; color: var(--texto); }
+  .rep-details li { margin: 4px 0; }
+  .rep-aclaracion { margin: 14px 0 0; font-size: .8rem; color: var(--suave); }
+  @media (max-width: 480px) { .rep-row { grid-template-columns: minmax(0, 1fr) 2.2em 1.9em; } .rep-track { grid-column: 1 / -1; grid-row: 2; } }
+  /* Puntaje y aviso junto a cada precio */
+  .confianza { display: inline-flex; align-items: center; gap: 4px; margin-left: 6px; font-size: .72rem; font-weight: 700; color: var(--suave); white-space: nowrap; }
+  .confianza i { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+  .oferta .aviso-tienda { display: block; font-size: .74rem; font-weight: 700; color: #b3261e; }
+  @media (prefers-color-scheme: dark) { .oferta .aviso-tienda { color: #ffb38a; } }
 
   /* Marca de agua al pie de la página */
   .firma {
@@ -166,6 +205,7 @@
   <div class="pestanas" role="tablist">
     <button id="pestanaBuscar" type="button" role="tab" aria-selected="true" aria-controls="vistaBuscar">Buscar</button>
     <button id="pestanaPromos" type="button" role="tab" aria-selected="false" aria-controls="vistaPromos">🔥 Promos</button>
+    <button id="pestanaTiendas" type="button" role="tab" aria-selected="false" aria-controls="vistaTiendas">Tiendas</button>
     <button id="pestanaAsistente" type="button" role="tab" aria-selected="false" aria-controls="vistaAsistente">Asistente</button>
   </div>
   <form id="formulario" role="search">
@@ -182,6 +222,7 @@
   <div id="sitios" class="sitios"></div>
   <p id="ayuda" class="ayuda" hidden>Tocá una tienda para ver solo sus productos.</p>
   <label id="filtro" class="filtro" hidden><input id="soloComparables" type="checkbox"> Mostrar solo productos que están en 2 o más tiendas</label>
+  <div id="preguntas" class="preguntas" hidden></div>
   <div id="resultados"><p class="mensaje">Escribí un producto y te muestro el precio en cada tienda. Elegí un rubro para buscar más rápido.</p></div>
   <button id="masResultados" class="mas-resultados" type="button" hidden>Mostrar más</button>
   <footer>Los precios son los publicados en la web de cada tienda al momento de buscar. Pueden no incluir promociones bancarias, de obra social ni del tipo 2x1. Los logos pertenecen a cada tienda.</footer>
@@ -193,9 +234,25 @@
   <div id="listaPromos"><p class="mensaje">Cargando promociones…</p></div>
   <div id="otrasPromos"></div>
 </main>
+<main id="vistaTiendas" role="tabpanel" hidden>
+  <div class="rep">
+    <h2 class="rep-title">Guía de reputación de tiendas online</h2>
+    <p class="rep-lede">Puntaje de confianza del 1 al 10 de cada tienda, según reseñas de compradores, reclamos y canal oficial. Pasá el mouse o tocá una fila para ver por qué tiene ese color.</p>
+    <div class="rep-legend"><div class="rep-legend-bar"></div><div class="rep-legend-labels"><span>Menos confianza</span><span>Más confianza</span></div></div>
+    <div id="grupos"><p class="mensaje">Cargando la guía…</p></div>
+    <details class="rep-details"><summary>Cómo se asigna el puntaje</summary><ul>
+      <li><b>9–10:</b> tienda o marca oficial, o cadena grande con envío al interior confirmado por escrito.</li>
+      <li><b>8:</b> oficial con algún dato a confirmar, o mayorista con buenas reseñas verificables.</li>
+      <li><b>7:</b> buena reputación sin señales de alerta, o cadena con reclamos en el promedio de su rubro.</li>
+      <li><b>6:</b> confiable pero con poca información: sin reseñas online o con una web que no se pudo leer.</li>
+      <li><b>5:</b> comprar con cuidado: baja resolución de reclamos u opiniones mixtas.</li>
+    </ul></details>
+    <p class="rep-aclaracion">Estimación con datos públicos al 19/11/2026, no es una calificación oficial.</p>
+  </div>
+</main>
 <main id="vistaAsistente" role="tabpanel" hidden>
   <div id="chat" class="chat">
-    <div class="burbuja asistente">¡Hola! Preguntame por precios o promociones, por ejemplo: "¿Dónde está más barata la yerba Playadito de 1 kilo?" o "¿Qué día conviene comprar en La Anónima?". Podés escribir o tocar el micrófono y hablar.</div>
+    <div class="burbuja asistente">¡Hola! ¿Qué estás buscando? Contámelo como se lo pedirías a un vendedor, por ejemplo "leche descremada de 1 litro" o "zapatillas para correr de hombre talle 42", y te busco dónde sale más barato. Si me falta algún dato, te pregunto. Podés escribir o tocar el micrófono y hablar.</div>
   </div>
   <form id="formClave" class="clave" hidden>
     <input id="clave" type="password" placeholder="Clave del asistente" aria-label="Clave del asistente" autocomplete="current-password">
@@ -264,6 +321,10 @@
 
       const tienda = crear('span', 'tienda');
       tienda.append(logo(oferta.sitio), nombres[oferta.sitio] || oferta.sitio);
+      const insignia = insigniaConfianza(oferta.sitio);
+      if (insignia) tienda.append(insignia);
+      const estadoTienda = ultimo.sitios.find((x) => x.id === oferta.sitio);
+      if (estadoTienda && estadoTienda.aviso) tienda.append(crear('span', 'aviso-tienda', estadoTienda.aviso));
       if (esMejor) tienda.append(crear('span', 'etiqueta', '🔥 Más barato'));
       // Si el nombre difiere entre tiendas, se muestra para que puedas verificar que es lo mismo.
       const detalle = !oferta.stock ? 'Sin stock' : oferta.nombre !== grupo.nombre ? oferta.nombre : '';
@@ -305,7 +366,7 @@
   // ---------- Rubros (dónde buscar) ----------
   const RUBROS = [
     { id: '', nombre: 'Todo' }, { id: 'farmacia', nombre: 'Farmacias' }, { id: 'super', nombre: 'Súper' },
-    { id: 'deportes', nombre: 'Deportes' }, { id: 'moda', nombre: 'Calzado y moda' }, { id: 'bazar', nombre: 'Bazar' },
+    { id: 'deportes', nombre: 'Deportes' }, { id: 'moda', nombre: 'Calzado y moda' }, { id: 'perfumeria', nombre: 'Perfumería' }, { id: 'bazar', nombre: 'Bazar' }, { id: 'mayoristas', nombre: 'Mayoristas' },
   ];
   let rubroElegido = '';
   try { rubroElegido = localStorage.getItem('rubro') || ''; } catch { /* sin almacenamiento */ }
@@ -332,8 +393,35 @@
   const POR_PAGINA = 30;
   let mostrando = POR_PAGINA;
 
+  // Preguntas para afinar la búsqueda: tocar una opción la suma a lo que se buscó.
+  function mostrarPreguntas() {
+    const preguntas = (ultimo && ultimo.preguntas) || [];
+    $('preguntas').hidden = !preguntas.length || Boolean(tiendaElegida);
+    if (!preguntas.length) return $('preguntas').replaceChildren();
+    $('preguntas').replaceChildren(
+      crear('p', null, 'Para encontrarte lo más barato, contame un poco más:'),
+      ...preguntas.map((p) => {
+        const bloque = crear('div', 'pregunta');
+        const opciones = crear('div', 'sitios');
+        for (const o of p.opciones) {
+          const boton = crear('button', 'sitio', o.texto);
+          boton.type = 'button';
+          boton.addEventListener('click', () => {
+            const consulta = `${$('consulta').value.trim()} ${o.agregar}`.trim();
+            $('consulta').value = consulta;
+            $('formulario').requestSubmit();
+          });
+          opciones.append(boton);
+        }
+        bloque.append(crear('span', null, p.pregunta), opciones);
+        return bloque;
+      })
+    );
+  }
+
   function mostrar() {
     if (!ultimo) return;
+    mostrarPreguntas();
     const nombres = Object.fromEntries(ultimo.sitios.map((s) => [s.id, s.nombre]));
     // Solo se muestran las tiendas que encontraron algo (o que fallaron), para no llenar la pantalla.
     const visibles = ultimo.sitios.filter((s) => !s.ok || s.cantidad > 0 || s.id === tiendaElegida);
@@ -388,6 +476,7 @@
     $('sitios').replaceChildren();
     $('filtro').hidden = true;
     $('ayuda').hidden = true;
+    $('preguntas').hidden = true;
     tiendaElegida = null;
     mostrando = POR_PAGINA;
     $('masResultados').hidden = true;
@@ -438,17 +527,131 @@
 
   // ---------- Pestañas ----------
   function elegirPestana(cual) {
-    for (const [nombre, pestana, vista] of [['buscar', 'pestanaBuscar', 'vistaBuscar'], ['promos', 'pestanaPromos', 'vistaPromos'], ['asistente', 'pestanaAsistente', 'vistaAsistente']]) {
+    for (const [nombre, pestana, vista] of [['buscar', 'pestanaBuscar', 'vistaBuscar'], ['promos', 'pestanaPromos', 'vistaPromos'], ['tiendas', 'pestanaTiendas', 'vistaTiendas'], ['asistente', 'pestanaAsistente', 'vistaAsistente']]) {
       $(pestana).setAttribute('aria-selected', String(cual === nombre));
       $(vista).hidden = cual !== nombre;
     }
     $('formulario').hidden = cual !== 'buscar';
     if (cual === 'asistente') $('pregunta').focus();
     if (cual === 'promos') cargarPromos();
+    if (cual === 'tiendas') cargarReputacion().then(mostrarGuia);
   }
   $('pestanaBuscar').addEventListener('click', () => elegirPestana('buscar'));
   $('pestanaPromos').addEventListener('click', () => elegirPestana('promos'));
+  $('pestanaTiendas').addEventListener('click', () => elegirPestana('tiendas'));
   $('pestanaAsistente').addEventListener('click', () => elegirPestana('asistente'));
+
+  // ---------- Guía de reputación (datos: /reputacion-tiendas.json) ----------
+  // Puntaje 4 = rojo, 10 = verde, en degradé.
+  function colorConfianza(puntaje) {
+    const tono = Math.max(0, Math.min(120, ((puntaje - 4) / 6) * 120));
+    return `hsl(${tono.toFixed(0)} 70% 42%)`;
+  }
+
+  let reputacion = null;
+  let cargandoReputacion = null;
+  function cargarReputacion() {
+    if (!cargandoReputacion) {
+      cargandoReputacion = fetch('/reputacion-tiendas.json')
+        .then((r) => r.json())
+        .then((datos) => {
+          reputacion = new Map(datos.map((t) => [t.nombre, t]));
+          reputacion.lista = datos;
+          if (ultimo) mostrar();
+        })
+        .catch(() => { cargandoReputacion = null; });
+    }
+    return cargandoReputacion;
+  }
+  cargarReputacion();
+
+  const ORDEN_GRUPOS = ['Indumentaria y calzado', 'Farmacia, belleza y perfumes originales', 'Perfumes árabes, decants e inspirados en', 'Supermercados y bazar', 'Mayoristas de importados'];
+  let guiaMostrada = false;
+
+  function mostrarGuia() {
+    if (!reputacion) {
+      $('grupos').replaceChildren(crear('p', 'mensaje', 'No se pudo cargar la guía. Revisá tu conexión.'));
+      return;
+    }
+    if (guiaMostrada) return;
+    guiaMostrada = true;
+    const datos = reputacion.lista;
+    const grupos = ORDEN_GRUPOS.concat(datos.map((r) => r.grupo).filter((g, i, a) => !ORDEN_GRUPOS.includes(g) && a.indexOf(g) === i));
+    const secciones = [];
+    for (const g of grupos) {
+      const filas = datos.filter((r) => r.grupo === g).sort((a, b) => (b.puntaje - a.puntaje) || a.nombre.localeCompare(b.nombre, 'es'));
+      if (!filas.length) continue;
+      const seccion = crear('section', 'rep-section');
+      const lista = crear('div', 'rep-list');
+      const tip = crear('div', 'rep-tip');
+      tip.hidden = true;
+      tip.setAttribute('role', 'tooltip');
+      seccion.append(crear('h3', 'rep-h2', g), lista);
+      let actual = null;
+      const mostrarTip = (fila, r) => {
+        tip.replaceChildren(crear('div', 'rep-tip-title', `${r.nombre} · ${r.puntaje}/10`), crear('div', null, r.motivo));
+        tip.hidden = false;
+        const lr = lista.getBoundingClientRect();
+        const fr = fila.getBoundingClientRect();
+        tip.style.top = `${fr.bottom - lr.top + 4}px`;
+        actual = fila;
+      };
+      const ocultarTip = () => { tip.hidden = true; actual = null; };
+      document.addEventListener('click', (e) => { if (!lista.contains(e.target)) ocultarTip(); });
+      for (const r of filas) {
+        const fila = crear('div', 'rep-row');
+        fila.tabIndex = 0;
+        const izquierda = crear('div');
+        const nombre = crear(r.url ? 'a' : 'span', 'rep-name', r.nombre);
+        if (r.url) { nombre.href = r.url; nombre.target = '_blank'; nombre.rel = 'noopener'; }
+        izquierda.append(nombre, crear('div', 'rep-rubro', r.rubro));
+        const barra = crear('div', 'rep-track');
+        barra.setAttribute('role', 'img');
+        barra.setAttribute('aria-label', `Confianza ${r.puntaje} de 10`);
+        const relleno = crear('div', 'rep-fill');
+        relleno.style.width = `${r.puntaje * 10}%`;
+        relleno.style.background = colorConfianza(r.puntaje);
+        barra.append(relleno);
+        const numero = crear('span', 'rep-score', String(r.puntaje));
+        numero.style.color = colorConfianza(r.puntaje);
+        const info = crear('button', 'rep-info', 'i');
+        info.type = 'button';
+        info.setAttribute('aria-label', `Por qué ${r.nombre} tiene este puntaje`);
+        fila.append(izquierda, barra, numero, info);
+        fila.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') mostrarTip(fila, r); });
+        fila.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') ocultarTip(); });
+        fila.addEventListener('click', (e) => {
+          if (e.target.closest('a')) return;
+          e.stopPropagation();
+          if (actual === fila && !tip.hidden) ocultarTip(); else mostrarTip(fila, r);
+        });
+        // Al tocar, la fila recibe el foco justo antes del clic: si el foco mostrara el
+        // motivo, el clic lo volvería a cerrar. El foco solo lo muestra con el teclado.
+        let porPuntero = false;
+        fila.addEventListener('pointerdown', () => { porPuntero = true; });
+        fila.addEventListener('focus', () => { if (!porPuntero) mostrarTip(fila, r); porPuntero = false; });
+        fila.addEventListener('blur', ocultarTip);
+        lista.append(fila);
+      }
+      lista.append(tip);
+      secciones.push(seccion);
+    }
+    $('grupos').replaceChildren(...secciones);
+  }
+
+  // Puntaje de la tienda junto a su precio (solo si está en la guía).
+  function insigniaConfianza(sitio) {
+    const estado = ultimo && ultimo.sitios.find((s) => s.id === sitio);
+    const r = reputacion && estado && reputacion.get(estado.reputacion);
+    if (!r) return null;
+    const insignia = crear('span', 'confianza');
+    const punto = crear('i');
+    punto.style.background = colorConfianza(r.puntaje);
+    insignia.append(punto, `${r.puntaje}/10`);
+    insignia.title = `Confianza ${r.puntaje}/10: ${r.motivo}`;
+    insignia.setAttribute('aria-label', `Confianza ${r.puntaje} de 10`);
+    return insignia;
+  }
 
   // ---------- Promociones bancarias (sin costo: no usa IA) ----------
   const NOMBRES_DIAS = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
