@@ -16,7 +16,7 @@ test('une el mismo código de barras entre farmacias y ordena por precio', async
   assert.deepStrictEqual(r.grupos[0].ofertas.map((o) => [o.sitio, o.precio]), [['b', 5064], ['a', 8440]]);
 });
 
-test('descarta lo que no coincide y deja al final las coincidencias parciales', async () => {
+test('si hay coincidencias completas, no muestra las parciales', async () => {
   const r = await comparar('ibuprofeno 400', [
     sitio('a', [
       producto('a', 'Esmalte de uñas 8 ml', '7891182035989', 4850),
@@ -25,7 +25,14 @@ test('descarta lo que no coincide y deja al final las coincidencias parciales', 
       producto('a', 'Ibuprofeno 400 x 20', '7798420160383', 5570),
     ]),
   ]);
-  assert.deepStrictEqual(r.grupos.map((g) => g.nombre), ['Ibuprofeno 400 x 20', 'Actron Rápida Acción 400 mg']);
+  assert.deepStrictEqual(r.grupos.map((g) => g.nombre), ['Ibuprofeno 400 x 20']);
+  assert.strictEqual(r.parciales, false);
+});
+
+test('sin coincidencias completas muestra las parciales y lo avisa', async () => {
+  const r = await comparar('ibuprofeno 400', [sitio('a', [producto('a', 'Actron Rápida Acción 400 mg', '7793640992769', 8440)])]);
+  assert.deepStrictEqual(r.grupos.map((g) => g.nombre), ['Actron Rápida Acción 400 mg']);
+  assert.strictEqual(r.parciales, true);
 });
 
 test('con una sola palabra no acepta productos que no la contienen', async () => {
@@ -117,4 +124,58 @@ test('una promo por cantidad más barata gana el primer lugar', async () => {
   ]);
   assert.strictEqual(r.grupos[0].nombre, 'Shampoo Fructis 350');
   assert.deepStrictEqual(r.grupos[0].ofertas.map((o) => [o.sitio, o.precioFinal]), [['a', 6060], ['b', 8000]]);
+});
+
+test('"1 litro" coincide con "1 L", "1lt", "1 lts" y "1000 ml", pero no con "1,5 L"', async () => {
+  const nombres = ['Leche Entera Casanto 1 L', 'Leche Check 1lt', 'Leche Tregar 1 Lts', 'Leche Ilolay 1000 ml', 'Leche Grande 1,5 L'];
+  const r = await comparar('leche 1 litro', [sitio('a', nombres.map((n, i) => producto('a', n, '', 1000 + i)))]);
+  assert.deepStrictEqual(r.grupos.map((g) => g.nombre).sort(), nombres.slice(0, 4).sort());
+});
+
+test('primero los productos cuyo nombre empieza con lo buscado, y después por precio', async () => {
+  const r = await comparar('leche', [sitio('a', [
+    producto('a', 'Alfajor Con Dulce De Leche', '', 559),
+    producto('a', 'Leche Descremada Check 1l', '', 1899),
+    producto('a', 'Leche Entera Casanto 1 L', '', 1785),
+  ])]);
+  assert.deepStrictEqual(r.grupos.map((g) => g.nombre), ['Leche Entera Casanto 1 L', 'Leche Descremada Check 1l', 'Alfajor Con Dulce De Leche']);
+});
+
+test('con varias palabras manda el precio aunque la marca vaya primero en el nombre', async () => {
+  const r = await comparar('ibuprofeno 400', [sitio('a', [
+    producto('a', 'Ibuprofeno Fabogesic 400 mg', '', 2500),
+    producto('a', 'Ibu 400 Ibuprofeno 400 mg', '', 1610),
+  ])]);
+  assert.deepStrictEqual(r.grupos.map((g) => g.precioMinimo), [1610, 2500]);
+});
+
+test('"remera de dama" encuentra remeras de mujer y no soquetes ni remeras de niña', async () => {
+  const r = await comparar('remera de dama', [sitio('a', [
+    producto('a', 'Soquete 361 Dama Flat Socks', '', 6220),
+    producto('a', 'Remera Topper Basic Girls Niña', '', 12499),
+    producto('a', 'Remera adidas Climacool De Mujer', '', 30000),
+    producto('a', 'Remera Basic', '', 20000, { palabrasClave: 'Indumentaria Remeras Mujer' }),
+  ])]);
+  assert.deepStrictEqual(r.grupos.map((g) => g.nombre), ['Remera Basic', 'Remera adidas Climacool De Mujer']);
+});
+
+test('con talle muestra solo productos que tienen ese talle con stock', async () => {
+  const r = await comparar('remera mujer talle s', [sitio('a', [
+    producto('a', 'Remera Mujer Uno', '', 100, { talles: ['M', 'L'] }),
+    producto('a', 'Remera Mujer Dos', '', 200, { talles: ['XS', 'S'] }),
+    producto('a', 'Remera Mujer Tres', '', 50),
+  ])]);
+  assert.strictEqual(r.talle, 'S');
+  assert.deepStrictEqual(r.grupos.map((g) => g.nombre), ['Remera Mujer Dos']);
+});
+
+test('"men" no coincide dentro de otras palabras', async () => {
+  const r = await comparar('remera hombre', [sitio('a', [producto('a', 'Remera Complemento Mujer', '', 100), producto('a', 'Remera Basic Men', '', 200)])]);
+  assert.deepStrictEqual(r.grupos.map((g) => g.nombre), ['Remera Basic Men']);
+});
+
+test('"dama" también encuentra fem, femme, woman y women', async () => {
+  const nombres = ['Remera Fem Basic', 'Remera Femme Selena', 'Remera Woman Classic', "Remera Women's Run", 'Remera Femenina', 'Remera Hombre'];
+  const r = await comparar('remera dama', [sitio('a', nombres.map((n, i) => producto('a', n, '', 100 + i)))]);
+  assert.deepStrictEqual(r.grupos.map((g) => g.nombre).sort(), nombres.slice(0, 5).sort());
 });
