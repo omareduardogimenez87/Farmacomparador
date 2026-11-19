@@ -3,23 +3,27 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Seco y furioso</title>
+<title>Precio Pirata</title>
 <meta name="description" content="Compará precios entre farmacias y supermercados online">
-<meta name="theme-color" content="#0f6b5c">
+<meta name="theme-color" content="#c8102e">
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="icon" href="/icono.svg" type="image/svg+xml">
 <link rel="icon" href="/icono-48.png" type="image/png" sizes="48x48">
 <link rel="apple-touch-icon" href="/icono-180.png">
-<meta name="apple-mobile-web-app-title" content="Seco y furioso">
+<meta name="apple-mobile-web-app-title" content="Precio Pirata">
 <style>
+  /* Colores de la bandera de Santiago del Estero (celeste, blanco, rojo punzó y el sol)
+     y del fuego del Hot Sale. */
   :root {
-    --fondo: #f3f5f4; --tarjeta: #ffffff; --texto: #17211e; --suave: #5d6b66; --borde: #dde3e0;
-    --marca: #0f6b5c; --marca-texto: #ffffff; --ahorro: #0a7a3d; --ahorro-fondo: #e2f5e9; --error: #b3261e;
+    --fondo: #eef5fb; --tarjeta: #ffffff; --texto: #1a1f29; --suave: #566170; --borde: #d6e3ef;
+    --marca: #c8102e; --marca-texto: #ffffff; --ahorro: #0a7a3d; --ahorro-fondo: #e2f5e9; --error: #b3261e;
+    --celeste: #5ba4d9; --sol: #f6b40e; --fuego: #ff6b1a;
   }
   @media (prefers-color-scheme: dark) {
     :root {
-      --fondo: #111715; --tarjeta: #1b2421; --texto: #e8eeeb; --suave: #9aa9a3; --borde: #2c3834;
-      --marca: #2aa58f; --marca-texto: #06201b; --ahorro: #6fdc9a; --ahorro-fondo: #143524; --error: #ff8a80;
+      --fondo: #0f1620; --tarjeta: #18222e; --texto: #e9eef4; --suave: #9fb0c2; --borde: #2a3a4c;
+      --marca: #ff5a5f; --marca-texto: #1a0507; --ahorro: #6fdc9a; --ahorro-fondo: #143524; --error: #ff8a80;
+      --celeste: #6fb4e6; --sol: #f6b40e; --fuego: #ff8a3d;
     }
   }
   * { box-sizing: border-box; }
@@ -32,8 +36,17 @@
     position: sticky; top: 0; z-index: 2; background: var(--fondo);
     padding: calc(12px + env(safe-area-inset-top)) 16px 10px; border-bottom: 1px solid var(--borde);
   }
+  /* Franja con la bandera de Santiago del Estero arriba de todo */
+  header {
+    padding-top: calc(24px + env(safe-area-inset-top));
+    background:
+      linear-gradient(to bottom, var(--celeste) 0 30%, #ffffff 30% 40%, #c8102e 40% 60%, #ffffff 60% 70%, var(--celeste) 70%) top / 100% 12px no-repeat,
+      var(--fondo);
+  }
   main, header > * { max-width: 640px; margin-left: auto; margin-right: auto; }
   h1 { font-size: 1.15rem; margin: 0 0 10px; color: var(--marca); }
+  .etiqueta { background: linear-gradient(90deg, #fff1d6, #ffe0cc) !important; color: #b3261e !important; }
+  @media (prefers-color-scheme: dark) { .etiqueta { background: #3a1d12 !important; color: #ffb38a !important; } }
   form { display: flex; gap: 8px; }
   input[type=search] {
     flex: 1; min-width: 0; padding: 12px 14px; font-size: 16px; color: var(--texto);
@@ -140,10 +153,10 @@
 </head>
 <body>
 <header>
-  <h1><img class="logo-app" src="/icono.svg" alt="" width="34" height="34">Seco y furioso <span class="beta">Versión de prueba</span></h1>
+  <h1><img class="logo-app" src="/icono.svg" alt="" width="34" height="34">Precio Pirata <span class="beta">Versión de prueba</span></h1>
   <div class="pestanas" role="tablist">
     <button id="pestanaBuscar" type="button" role="tab" aria-selected="true" aria-controls="vistaBuscar">Buscar</button>
-    <button id="pestanaPromos" type="button" role="tab" aria-selected="false" aria-controls="vistaPromos">Promos</button>
+    <button id="pestanaPromos" type="button" role="tab" aria-selected="false" aria-controls="vistaPromos">🔥 Promos</button>
     <button id="pestanaAsistente" type="button" role="tab" aria-selected="false" aria-controls="vistaAsistente">Asistente</button>
   </div>
   <form id="formulario" role="search">
@@ -238,7 +251,7 @@
 
       const tienda = crear('span', 'tienda');
       tienda.append(logo(oferta.sitio), nombres[oferta.sitio] || oferta.sitio);
-      if (esMejor) tienda.append(crear('span', 'etiqueta', 'Más barato'));
+      if (esMejor) tienda.append(crear('span', 'etiqueta', '🔥 Más barato'));
       // Si el nombre difiere entre tiendas, se muestra para que puedas verificar que es lo mismo.
       const detalle = !oferta.stock ? 'Sin stock' : oferta.nombre !== grupo.nombre ? oferta.nombre : '';
       if (detalle) tienda.append(crear('span', 'detalle', detalle));

@@ -1,6 +1,6 @@
-# Seco y furioso
+# Precio Pirata
 
-(Antes se llamaba Farmacomparador. El repositorio, el proyecto de Vercel y la dirección web conservan ese nombre.)
+(Antes se llamó Farmacomparador y Seco y furioso. El repositorio, el proyecto de Vercel y la dirección web conservan ese nombre.)
 
 App para el celular que busca un producto y muestra el precio en varias farmacias y supermercados online a la vez.
 

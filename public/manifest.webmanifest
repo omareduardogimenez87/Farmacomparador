@@ -1,11 +1,11 @@
 {
-  "name": "Seco y furioso",
-  "short_name": "Seco y furioso",
+  "name": "Precio Pirata",
+  "short_name": "Precio Pirata",
   "description": "Compará precios entre farmacias y supermercados online",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#f3f5f4",
-  "theme_color": "#0f6b5c",
+  "background_color": "#eef5fb",
+  "theme_color": "#c8102e",
   "icons": [
     {
       "src": "/icono-192.png",
