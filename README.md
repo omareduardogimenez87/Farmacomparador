@@ -8,14 +8,15 @@ App para el celular que busca un producto y muestra el precio en varias farmacia
 
 ## Tiendas incluidas
 
-55 tiendas, agrupadas por rubro. Se puede buscar en todas o en un solo rubro.
+61 tiendas, agrupadas por rubro. Se puede buscar en todas o en un solo rubro.
 
 | Rubro | Tiendas |
 | --- | --- |
-| Farmacias | La Esquina, Farmacity, Farmalife, Farmaonline |
+| Farmacias | La Esquina, Farmacity, Farmalife, Farmaonline, Farmacias Selma, Farmacia Leloir |
 | Supermercados | MásOnline, Vea, La Anónima |
 | Deportes y marcas | ENA Sport, Puma, Topper, Fila, Reebok, Under Armour, Saucony, Crocs, Columbia, DC Shoes, Kappa, Decathlon, Atomik, Asics, New Balance, Dexter, Stock Center, Moov, Sporting, Ferreira Sport, Woker, Séptimo Store, New Sport, Fuencarral, Cero26, Mateu Sports, Rossetti, Solo Deportes, Sportline, Marathon, Victoria Deportes, Vandalia, Somos Deportes |
 | Calzado y moda | Grid, Solo Urbano, Paco García, Indonesia Shop, Vallejo Calzados, Aurelius, Go Store, 47 Street, Cuesta Blanca, Mimo & Co, Briganti, Tejano, Burgues, Anation |
+| Perfumería y cosmética | Juleriaque, Rouge, Pigmento, L'Occitane |
 | Bazar y juguetería | Las Mil Novedades (precios mayoristas; compra online mínima de $80.000) |
 
 **No incluidas:**
