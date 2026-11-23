@@ -8,7 +8,7 @@ App para el celular que busca un producto y muestra el precio en varias farmacia
 
 ## Tiendas incluidas
 
-9 tiendas, agrupadas por rubro. Se puede buscar en todas o en un solo rubro.
+12 tiendas, agrupadas por rubro. Se puede buscar en todas o en un solo rubro.
 
 | Rubro | Tiendas |
 | --- | --- |
@@ -16,8 +16,11 @@ App para el celular que busca un producto y muestra el precio en varias farmacia
 | Supermercados | MásOnline, Vea, La Anónima |
 | Deportes | ENA Sport |
 | Bazar y juguetería | Las Mil Novedades (precios mayoristas; compra online mínima de $80.000) |
+| Electro, tecnología y hogar | Easy, Electronorte, Maxtecno |
 
-Antes la app llegó a tener 71 tiendas (deportes, moda, perfumería y mayoristas). Edu decidió dejar solo estas 9. Las demás están en el historial de GitHub y en la planilla `Tiendas Ahorra+Sgo.xlsx`, por si se quieren volver a sumar.
+**No incluidas:** Frávega (su web rechaza las consultas automáticas, error 403), Megatone (su buscador no se pudo leer) y Pixis (su tienda usa un sistema propio que la app no puede leer).
+
+Antes la app llegó a tener 71 tiendas (deportes, moda, perfumería y mayoristas). Edu decidió dejar solo 9 y después sumó las de electro y hogar. Las demás están en el historial de GitHub y en la planilla `Tiendas Ahorra+Sgo.xlsx`, por si se quieren volver a sumar.
 
 Las tiendas se consultan por plataforma (`lib/plataformas.js`). Hay adaptadores para VTEX, Shopify, Tiendanube, Magento, Salesforce, PrestaShop y Odoo, y en `lib/sitios.js` para WooCommerce y Drubbit. Para sumar una tienda de esas plataformas alcanza con agregar una línea en `lib/sitios.js`.
 
