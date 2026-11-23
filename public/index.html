@@ -78,6 +78,34 @@
     display: flex; align-items: center; justify-content: space-between; gap: 10px;
     padding: 10px 2px; border-top: 1px solid var(--borde); color: inherit; text-decoration: none;
   }
+  .oferta .enlace-oferta {
+    flex: 1; min-width: 0; display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    color: inherit; text-decoration: none;
+  }
+  .agregar {
+    flex: none; width: 44px; height: 44px; padding: 0; border-radius: 12px; font-size: 1.15rem;
+    background: var(--tarjeta); color: var(--marca); border: 1px solid var(--marca);
+  }
+  .agregar.en-lista { background: var(--marca); color: var(--marca-texto); }
+  .boton-lista {
+    position: fixed; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); z-index: 3;
+    padding: 12px 18px; border-radius: 999px; font-size: 1rem; font-weight: 700;
+    background: var(--marca); color: var(--marca-texto); border: 0; box-shadow: 0 4px 14px rgba(0, 0, 0, .25);
+  }
+  main { padding-bottom: 84px; }
+  .lista-tienda { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 14px; padding: 12px; margin-bottom: 12px; }
+  .lista-tienda h2 { display: flex; align-items: center; gap: 8px; font-size: 1.05rem; margin: 0 0 6px; }
+  .lista-item { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-top: 1px solid var(--borde); }
+  .lista-item .nombre-item { flex: 1; min-width: 0; color: inherit; font-size: .92rem; }
+  .lista-item .subtotal { white-space: nowrap; font-weight: 700; }
+  .cantidad { display: flex; align-items: center; gap: 4px; }
+  .cantidad button { width: 34px; height: 34px; padding: 0; border-radius: 10px; background: transparent; color: var(--texto); border: 1px solid var(--borde); font-size: 1.1rem; }
+  .cantidad span { min-width: 22px; text-align: center; font-weight: 700; }
+  .total-tienda { display: flex; justify-content: space-between; font-weight: 700; padding-top: 8px; border-top: 1px solid var(--borde); }
+  .pasar-carrito { display: block; width: 100%; margin-top: 10px; padding: 12px; border-radius: 12px; text-align: center;
+    background: var(--marca); color: var(--marca-texto); font-weight: 700; text-decoration: none; }
+  .total-lista { font-size: 1.15rem; font-weight: 700; text-align: right; margin: 4px 0 12px; }
+  .vaciar { width: 100%; padding: 10px; background: transparent; color: var(--error); border: 1px solid var(--error); border-radius: 12px; }
   .oferta .tienda { font-weight: 600; }
   .oferta .detalle { display: block; font-size: .78rem; font-weight: 400; color: var(--suave); }
   .oferta .precios { text-align: right; white-space: nowrap; }
@@ -234,6 +262,12 @@
   <div id="listaPromos"><p class="mensaje">Cargando promociones…</p></div>
   <div id="otrasPromos"></div>
 </main>
+<main id="vistaLista" hidden>
+  <h2 class="grupo-promos">🛒 Mi lista</h2>
+  <p class="ayuda">Los productos que agregás quedan guardados en este celular. Los precios son los del momento en que los agregaste: el precio final es el que muestra cada tienda al pagar.</p>
+  <div id="contenidoLista"></div>
+</main>
+<button id="botonLista" class="boton-lista" type="button" hidden>🛒 Mi lista</button>
 <main id="vistaTiendas" role="tabpanel" hidden>
   <div class="rep">
     <h2 class="rep-title">Guía de reputación de tiendas online</h2>
@@ -316,8 +350,9 @@
     const conStock = grupo.ofertas.filter((oferta) => oferta.stock);
     grupo.ofertas.forEach((oferta, i) => {
       const esMejor = oferta.stock && i === 0 && conStock.length > 1 && final(conStock[1]) > final(oferta);
-      const fila = crear('a', 'oferta' + (esMejor ? ' mejor' : '') + (oferta.stock ? '' : ' agotado'));
-      fila.href = oferta.url; fila.target = '_blank'; fila.rel = 'noopener';
+      const fila = crear('div', 'oferta' + (esMejor ? ' mejor' : '') + (oferta.stock ? '' : ' agotado'));
+      const enlace = crear('a', 'enlace-oferta');
+      enlace.href = oferta.url; enlace.target = '_blank'; enlace.rel = 'noopener';
 
       const tienda = crear('span', 'tienda');
       tienda.append(logo(oferta.sitio), nombres[oferta.sitio] || oferta.sitio);
@@ -341,7 +376,9 @@
         precios.append(crear('span', 'precio', (oferta.desde ? 'desde ' : '') + pesos.format(oferta.precio)));
         if (oferta.precioLista > oferta.precio) precios.append(crear('span', 'lista', pesos.format(oferta.precioLista)));
       }
-      fila.append(tienda, precios);
+      enlace.append(tienda, precios);
+      fila.append(enlace);
+      if (oferta.stock) fila.append(botonAgregar(oferta, grupo, nombres));
       caja.append(fila);
     });
 
@@ -361,6 +398,153 @@
       caja.append(crear('p', 'ahorro', `Llevando ${promoMejor.unidades} ahorrás ${pesos.format(mejor.precio - final(mejor))} por unidad.`));
     }
     return caja;
+  }
+
+  // ---------- Mi lista (carrito propio de la app) ----------
+  // Tiendas VTEX donde un enlace arma el carrito con todos los productos juntos (probado).
+  // En Vea el enlace no carga los productos: ahí se abre cada producto.
+  const CARRITO_VTEX = {
+    masonline: 'https://www.masonline.com.ar', farmacity: 'https://www.farmacity.com', farmalife: 'https://www.farmalife.com.ar',
+    farmaonline: 'https://www.farmaonline.com', easy: 'https://www.easy.com.ar',
+  };
+  // Tiendas WooCommerce donde un enlace agrega un producto por vez (probado).
+  const CARRITO_WOO = { lasmilnovedades: 'https://lasmilnovedades.com' };
+
+  let lista = [];
+  try { lista = JSON.parse(localStorage.getItem('miLista') || '[]'); } catch { lista = []; }
+  if (!Array.isArray(lista)) lista = [];
+  function guardarLista() {
+    try { localStorage.setItem('miLista', JSON.stringify(lista)); } catch { /* sin almacenamiento: dura hasta cerrar */ }
+    actualizarBotonLista();
+  }
+  const claveItem = (oferta) => `${oferta.sitio}|${oferta.url}`;
+  function enLista(oferta) { return lista.some((x) => x.clave === claveItem(oferta)); }
+
+  // Total de un producto: si la promo es "llevando N", cada grupo de N unidades va a precio de promo.
+  function subtotal(item) {
+    const p = item.promo;
+    if (p && item.cantidad >= p.unidades) {
+      const enPromo = Math.floor(item.cantidad / p.unidades) * p.unidades;
+      return enPromo * p.precioUnidad + (item.cantidad - enPromo) * item.precio;
+    }
+    return item.cantidad * item.precio;
+  }
+
+  function botonAgregar(oferta, grupo, nombresTiendas) {
+    const boton = crear('button', 'agregar');
+    boton.type = 'button';
+    const pintar = () => {
+      const esta = enLista(oferta);
+      boton.textContent = esta ? '✓' : '+🛒';
+      boton.classList.toggle('en-lista', esta);
+      boton.setAttribute('aria-label', esta ? `Quitar de mi lista: ${oferta.nombre}` : `Agregar a mi lista: ${oferta.nombre}`);
+    };
+    boton.addEventListener('click', () => {
+      const clave = claveItem(oferta);
+      if (enLista(oferta)) {
+        lista = lista.filter((x) => x.clave !== clave);
+      } else {
+        const promo = oferta.promoCantidad && oferta.promoCantidad.precioUnidad < oferta.precio ? oferta.promoCantidad : null;
+        lista.push({
+          clave, sitio: oferta.sitio, nombre: oferta.nombre || grupo.nombre, url: oferta.url,
+          precio: oferta.precio, promo, cantidad: promo ? promo.unidades : 1,
+          sku: oferta.sku || '', vendedor: oferta.vendedor || '1', idTienda: oferta.idTienda || '',
+          tienda: nombresTiendas[oferta.sitio] || oferta.sitio,
+        });
+      }
+      guardarLista();
+      pintar();
+    });
+    pintar();
+    return boton;
+  }
+
+  function actualizarBotonLista() {
+    const unidades = lista.reduce((suma, x) => suma + x.cantidad, 0);
+    $('botonLista').textContent = `🛒 Mi lista (${unidades})`;
+    $('botonLista').hidden = !lista.length || !$('vistaLista').hidden;
+  }
+
+  function enlaceCarritoTienda(sitio, items) {
+    if (CARRITO_VTEX[sitio] && items.every((x) => x.sku)) {
+      const partes = items.map((x) => `sku=${encodeURIComponent(x.sku)}&qty=${x.cantidad}&seller=${encodeURIComponent(x.vendedor)}`);
+      return `${CARRITO_VTEX[sitio]}/checkout/cart/add?${partes.join('&')}&sc=1`;
+    }
+    return '';
+  }
+  function enlaceItem(item) {
+    if (CARRITO_WOO[item.sitio] && item.idTienda) return `${CARRITO_WOO[item.sitio]}/?add-to-cart=${encodeURIComponent(item.idTienda)}&quantity=${item.cantidad}`;
+    return item.url;
+  }
+
+  function mostrarLista() {
+    const contenido = [];
+    if (!lista.length) {
+      contenido.push(crear('p', 'mensaje', 'Tu lista está vacía. En los resultados, tocá +🛒 al lado de un precio para agregarlo.'));
+    }
+    const porTienda = new Map();
+    for (const item of lista) {
+      if (!porTienda.has(item.sitio)) porTienda.set(item.sitio, []);
+      porTienda.get(item.sitio).push(item);
+    }
+    let totalGeneral = 0;
+    for (const [sitio, items] of porTienda) {
+      const caja = crear('section', 'lista-tienda');
+      const titulo = crear('h2');
+      titulo.append(logo(sitio), items[0].tienda);
+      caja.append(titulo);
+      let total = 0;
+      for (const item of items) {
+        const fila = crear('div', 'lista-item');
+        const nombre = crear('a', 'nombre-item', item.nombre);
+        nombre.href = enlaceItem(item); nombre.target = '_blank'; nombre.rel = 'noopener';
+        const cantidad = crear('div', 'cantidad');
+        const menos = crear('button', null, item.cantidad > 1 ? '−' : '🗑');
+        menos.type = 'button';
+        menos.setAttribute('aria-label', item.cantidad > 1 ? 'Una unidad menos' : 'Quitar de la lista');
+        menos.addEventListener('click', () => {
+          if (item.cantidad > 1) item.cantidad -= 1; else lista = lista.filter((x) => x !== item);
+          guardarLista(); mostrarLista();
+        });
+        const mas = crear('button', null, '+');
+        mas.type = 'button'; mas.setAttribute('aria-label', 'Una unidad más');
+        mas.addEventListener('click', () => { item.cantidad += 1; guardarLista(); mostrarLista(); });
+        cantidad.append(menos, crear('span', null, String(item.cantidad)), mas);
+        const monto = subtotal(item);
+        total += monto;
+        fila.append(nombre, cantidad, crear('span', 'subtotal', pesos.format(monto)));
+        caja.append(fila);
+        if (item.promo && item.cantidad < item.promo.unidades) {
+          caja.append(crear('p', 'ayuda', `🔥 Llevando ${item.promo.unidades} pagás ${pesos.format(item.promo.precioUnidad)} c/u.`));
+        }
+      }
+      totalGeneral += total;
+      const fila = crear('div', 'total-tienda');
+      fila.append(crear('span', null, `Total en ${items[0].tienda}`), crear('span', null, pesos.format(total)));
+      caja.append(fila);
+      const enlace = enlaceCarritoTienda(sitio, items);
+      if (enlace) {
+        const boton = crear('a', 'pasar-carrito', `Pasar todo al carrito de ${items[0].tienda}`);
+        boton.href = enlace; boton.target = '_blank'; boton.rel = 'noopener';
+        caja.append(boton, crear('p', 'ayuda', 'Se abre la tienda con estos productos ya cargados. Ahí elegís envío o retiro y pagás.'));
+      } else if (CARRITO_WOO[sitio]) {
+        caja.append(crear('p', 'ayuda', 'Tocá cada producto: se abre la tienda y lo agrega a su carrito con la cantidad elegida.'));
+      } else {
+        caja.append(crear('p', 'ayuda', 'Esta tienda no permite cargar su carrito desde otra app: tocá cada producto y agregalo en su página.'));
+      }
+      contenido.push(caja);
+    }
+    if (lista.length) {
+      contenido.push(crear('p', 'total-lista', `Total estimado: ${pesos.format(totalGeneral)}`));
+      const vaciar = crear('button', 'vaciar', 'Vaciar la lista');
+      vaciar.type = 'button';
+      vaciar.addEventListener('click', () => {
+        if (!confirm('¿Vaciar toda la lista?')) return;
+        lista = []; guardarLista(); mostrarLista();
+      });
+      contenido.push(vaciar);
+    }
+    $('contenidoLista').replaceChildren(...contenido);
   }
 
   // ---------- Rubros (dónde buscar) ----------
@@ -531,6 +715,9 @@
       $(pestana).setAttribute('aria-selected', String(cual === nombre));
       $(vista).hidden = cual !== nombre;
     }
+    $('vistaLista').hidden = cual !== 'lista';
+    if (cual === 'lista') mostrarLista();
+    actualizarBotonLista();
     $('formulario').hidden = cual !== 'buscar';
     if (cual === 'asistente') $('pregunta').focus();
     if (cual === 'promos') cargarPromos();
@@ -540,6 +727,8 @@
   $('pestanaPromos').addEventListener('click', () => elegirPestana('promos'));
   $('pestanaTiendas').addEventListener('click', () => elegirPestana('tiendas'));
   $('pestanaAsistente').addEventListener('click', () => elegirPestana('asistente'));
+  $('botonLista').addEventListener('click', () => { elegirPestana('lista'); window.scrollTo(0, 0); });
+  actualizarBotonLista();
 
   // ---------- Guía de reputación (datos: /reputacion-tiendas.json) ----------
   // Puntaje 4 = rojo, 10 = verde, en degradé.
