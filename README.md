@@ -8,34 +8,21 @@ App para el celular que busca un producto y muestra el precio en varias farmacia
 
 ## Tiendas incluidas
 
-71 tiendas, agrupadas por rubro. Se puede buscar en todas o en un solo rubro.
+12 tiendas, agrupadas por rubro. Se puede buscar en todas o en un solo rubro.
 
 | Rubro | Tiendas |
 | --- | --- |
-| Farmacias | La Esquina, Farmacity, Farmalife, Farmaonline, Farmacias Selma, Farmacia Leloir |
+| Farmacias | La Esquina, Farmacity, Farmalife, Farmaonline |
 | Supermercados | MásOnline, Vea, La Anónima |
-| Deportes y marcas | Punto Deportivo, Mc Center Deportes, Kavak Deportes, ENA Sport, Puma, Topper, Fila, Reebok, Under Armour, Saucony, Crocs, Columbia, DC Shoes, Kappa, Decathlon, Atomik, Asics, New Balance, Dexter, Stock Center, Moov, Sporting, Ferreira Sport, Woker, Séptimo Store, New Sport, Fuencarral, Cero26, Mateu Sports, Rossetti, Solo Deportes, Sportline, Marathon, Victoria Deportes, Vandalia, Somos Deportes |
-| Calzado y moda | Grid, Solo Urbano, Paco García, Indonesia Shop, Vallejo Calzados, Aurelius, Go Store, 47 Street, Cuesta Blanca, Mimo & Co, Briganti, Tejano, Burgues, Anation |
-| Perfumería y cosmética | Juleriaque, Rouge, Pigmento, L'Occitane, Beauty24, Todoperfumes (NO ORIGINAL: inspirado en), Mixperfume (decants) |
+| Deportes | ENA Sport |
 | Bazar y juguetería | Las Mil Novedades (precios mayoristas; compra online mínima de $80.000) |
-| Mayoristas | Ximaro (mín. 10 productos), Somostec (mínimo a consultar), Encanto Importaciones (mín. $100.000 con IVA), Megamix (mín. $400.000) |
+| Electro, tecnología y hogar | Easy, Electronorte, Maxtecno |
 
-**No incluidas:**
+**No incluidas:** Frávega (su web rechaza las consultas automáticas, error 403), Megatone (su buscador no se pudo leer) y Pixis (su tienda usa un sistema propio que la app no puede leer).
 
-| Tienda | Motivo |
-| --- | --- |
-| Nike, adidas, Capaccioni | Tienen protección contra programas automáticos (Cloudflare o Akamai) |
-| Grimoldi, Vans, Muni Depot | Usan buscadores propios que la app no puede leer |
-| Natura en Mercado Libre | Mercado Libre rechaza las consultas automáticas (error 403) |
-| Dermaglós | Su sitio es institucional: no vende ni publica precios (sus productos están en las farmacias) |
-| Diarco | Su web no publica precios, y sus ofertas son folletos en imagen |
-| Farmar | Su buscador exige una credencial de acceso |
-| L'Oréal Paris | El sitio no publica precios |
-| Elit | Hay que darse de alta como cliente para ver precios |
-| Matana, Extracto Importado | Cargan sus productos de una forma que la app todavía no puede leer |
-| Pachos | Vende por Mercado Libre, que rechaza las consultas automáticas |
+Antes la app llegó a tener 71 tiendas (deportes, moda, perfumería y mayoristas). Edu decidió dejar solo 9 y después sumó las de electro y hogar. Las demás están en el historial de GitHub y en la planilla `Tiendas Ahorra+Sgo.xlsx`, por si se quieren volver a sumar.
 
-Las tiendas se consultan por plataforma (`lib/plataformas.js`): VTEX, Shopify, Tiendanube, Magento, Salesforce, WooCommerce, PrestaShop y Odoo. Para sumar una tienda de esas plataformas alcanza con agregar una línea en `lib/sitios.js`.
+Las tiendas se consultan por plataforma (`lib/plataformas.js`). Hay adaptadores para VTEX, Shopify, Tiendanube, Magento, Salesforce, PrestaShop y Odoo, y en `lib/sitios.js` para WooCommerce y Drubbit. Para sumar una tienda de esas plataformas alcanza con agregar una línea en `lib/sitios.js`.
 
 ## Cómo compara
 
