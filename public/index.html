@@ -576,6 +576,10 @@
     if (guiaMostrada) return;
     guiaMostrada = true;
     const datos = reputacion.lista;
+    if (!datos.length) {
+      $('grupos').replaceChildren(crear('p', 'mensaje', 'Todavía no hay tiendas cargadas en la guía.'));
+      return;
+    }
     const grupos = ORDEN_GRUPOS.concat(datos.map((r) => r.grupo).filter((g, i, a) => !ORDEN_GRUPOS.includes(g) && a.indexOf(g) === i));
     const secciones = [];
     for (const g of grupos) {
