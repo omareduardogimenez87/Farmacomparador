@@ -74,6 +74,7 @@
   .cabecera img { width: 56px; height: 56px; object-fit: contain; border-radius: 8px; background: #fff; flex: none; }
   .cabecera h2 { font-size: 1rem; margin: 0; overflow-wrap: anywhere; }
   .cabecera small { color: var(--suave); }
+  .rinde { display: block; margin-top: 4px; font-size: .82rem; font-weight: 600; color: var(--ahorro); }
   .oferta {
     display: flex; align-items: center; justify-content: space-between; gap: 10px;
     padding: 10px 2px; border-top: 1px solid var(--borde); color: inherit; text-decoration: none;
@@ -307,6 +308,7 @@
 <script>
   const pesos = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 });
   const $ = (id) => document.getElementById(id);
+  const pesos2 = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 2 });
   let ultimo = null;
   let tiendaElegida = null;
 
@@ -342,6 +344,12 @@
     const titulos = crear('div');
     titulos.append(crear('h2', null, grupo.nombre));
     if (grupo.marca) titulos.append(crear('small', null, grupo.marca));
+    if (grupo.precioPorMedida) {
+      const nombres = { l: 'litro', kg: 'kilo', m: 'metro' };
+      const hojas = grupo.medida.hojas > 1 ? ` (hoja ${grupo.medida.hojas === 2 ? 'doble' : 'triple'}: rinde x${grupo.medida.hojas})` : '';
+      const total = `${Number(grupo.medida.total.toFixed(3)).toLocaleString('es-AR')} ${grupo.medida.unidad === 'm' ? 'm' : grupo.medida.unidad}`;
+      titulos.append(crear('span', 'rinde', `Rinde: ${pesos2.format(grupo.precioPorMedida)} por ${nombres[grupo.medida.unidad]}${hojas} · trae ${total}`));
+    }
     cabecera.append(titulos);
     caja.append(cabecera);
 

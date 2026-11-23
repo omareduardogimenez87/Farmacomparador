@@ -27,6 +27,7 @@ Las tiendas se consultan por plataforma (`lib/plataformas.js`). Hay adaptadores 
 ## Cómo compara
 
 - Le hace la misma búsqueda a cada tienda al mismo tiempo.
+- **Ordena por lo que rinde**: si los productos dicen cuánto traen (litros, kilos o metros), la app calcula el precio por litro, por kilo o por metro y ordena de lo que más rinde a lo que menos. Cuenta los packs ("4 x 30 m" son 120 metros, "pack x 6 de 1,5 l" son 9 litros). En el papel higiénico, la hoja doble cuenta como el doble de rendimiento que la simple, y la triple como el triple (es una estimación). Los productos que no dicen su medida van al final.
 - Si dos tiendas publican el **mismo código de barras (EAN)**, la app los junta en una sola tarjeta y marca el más barato. Es la única forma confiable de saber que es exactamente el mismo producto.
 - Lo que no se puede emparejar por código (por ejemplo, todo ENA Sport y La Anónima) aparece en una tarjeta propia.
 - Tocando la etiqueta de una tienda se ven solo sus productos.
