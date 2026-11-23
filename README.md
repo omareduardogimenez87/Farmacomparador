@@ -8,7 +8,7 @@ App para el celular que busca un producto y muestra el precio en varias farmacia
 
 ## Tiendas incluidas
 
-12 tiendas, agrupadas por rubro. Se puede buscar en todas o en un solo rubro.
+13 tiendas, agrupadas por rubro. Se puede buscar en todas o en un solo rubro.
 
 | Rubro | Tiendas |
 | --- | --- |
@@ -16,7 +16,7 @@ App para el celular que busca un producto y muestra el precio en varias farmacia
 | Supermercados | MásOnline, Vea, La Anónima |
 | Deportes | ENA Sport |
 | Bazar y juguetería | Las Mil Novedades (precios mayoristas; compra online mínima de $80.000) |
-| Electro, tecnología y hogar | Easy, Electronorte, Maxtecno |
+| Electro, tecnología y hogar | Easy, Electronorte, Maxtecno, Import Cell Sgo (precio minorista; compra mínima de $50.000) |
 
 **No incluidas:** Frávega (su web rechaza las consultas automáticas, error 403), Megatone (su buscador no se pudo leer) y Pixis (su tienda usa un sistema propio que la app no puede leer).
 
