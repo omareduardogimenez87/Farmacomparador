@@ -345,10 +345,13 @@
     titulos.append(crear('h2', null, grupo.nombre));
     if (grupo.marca) titulos.append(crear('small', null, grupo.marca));
     if (grupo.precioPorMedida) {
+      const u = grupo.medida.unidad;
       const nombres = { l: 'litro', kg: 'kilo', m: 'metro' };
+      const plurales = { 'paño': 'paños', 'pañal': 'pañales', toallita: 'toallitas', servilleta: 'servilletas', saquito: 'saquitos', 'cápsula': 'cápsulas', comprimido: 'comprimidos' };
       const hojas = grupo.medida.hojas > 1 ? ` (hoja ${grupo.medida.hojas === 2 ? 'doble' : 'triple'}: rinde x${grupo.medida.hojas})` : '';
-      const total = `${Number(grupo.medida.total.toFixed(3)).toLocaleString('es-AR')} ${grupo.medida.unidad === 'm' ? 'm' : grupo.medida.unidad}`;
-      titulos.append(crear('span', 'rinde', `Rinde: ${pesos2.format(grupo.precioPorMedida)} por ${nombres[grupo.medida.unidad]}${hojas} · trae ${total}`));
+      const cantidad = Number(grupo.medida.total.toFixed(3)).toLocaleString('es-AR');
+      const total = nombres[u] ? `${cantidad} ${u}` : `${cantidad} ${grupo.medida.total === 1 ? u : plurales[u] || u}`;
+      titulos.append(crear('span', 'rinde', `Rinde: ${pesos2.format(grupo.precioPorMedida)} por ${nombres[u] || u}${hojas} · trae ${total}`));
     }
     cabecera.append(titulos);
     caja.append(cabecera);

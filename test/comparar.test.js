@@ -10,7 +10,17 @@ test('calcula cuánto trae cada producto para comparar lo que rinde', () => {
   assert.deepStrictEqual(medidaTotal('Gaseosa Pack x 6 de 1,5 l'), { unidad: 'l', total: 9, hojas: 1 });
   assert.deepStrictEqual(medidaTotal('Shampoo Dove 400 ml'), { unidad: 'l', total: 0.4, hojas: 1 });
   assert.deepStrictEqual(medidaTotal('Yerba Playadito 500 g'), { unidad: 'kg', total: 0.5, hojas: 1 });
-  assert.strictEqual(medidaTotal('Ibuprofeno 400 x 10 comprimidos'), null);
+  assert.deepStrictEqual(medidaTotal('Ibuprofeno 400 x 10 comprimidos'), { unidad: 'comprimido', total: 10, hojas: 1 });
+  // Rollos de cocina: por paño.
+  assert.deepStrictEqual(medidaTotal('Rollo De Cocina Sol Mayor 40 Paños 3 U'), { unidad: 'paño', total: 120, hojas: 1 });
+  assert.deepStrictEqual(medidaTotal('Rollo Cocina Best 3 x 50 paños x 3 un.'), { unidad: 'paño', total: 150, hojas: 1 });
+  assert.deepStrictEqual(medidaTotal('Rollo de Cocina Doble Hoja 120 Paños 3 Un Felpita'), { unidad: 'paño', total: 120, hojas: 2 });
+  assert.deepStrictEqual(medidaTotal('Rollo De Cocina Sussex Hoja Simple 200 Paños 1u'), { unidad: 'paño', total: 200, hojas: 1 });
+  assert.deepStrictEqual(medidaTotal('Rollos De Cocina Check 20,7 Cm X 20 Cm 50 Paños 3u'), { unidad: 'paño', total: 150, hojas: 1 });
+  assert.deepStrictEqual(medidaTotal('Servilletas de Papel Farmacity x 70 un'), { unidad: 'servilleta', total: 70, hojas: 1 });
+  assert.deepStrictEqual(medidaTotal('Pañales Pampers Confort Sec XG x 40 un'), { unidad: 'pañal', total: 40, hojas: 1 });
+  assert.deepStrictEqual(medidaTotal('Pañal adulto clásico talle g (10 unidades)'), { unidad: 'pañal', total: 10, hojas: 1 });
+  assert.deepStrictEqual(medidaTotal('Detergente Lavavajillas Ultra Limón 100 Ml x 36 Un Multima'), { unidad: 'l', total: 0.1, hojas: 1 });
   assert.deepStrictEqual(medidaTotal('Shampoo Elvive Reparación Total 5 x 400 ml'), { unidad: 'l', total: 0.4, hojas: 1 });
   assert.deepStrictEqual(medidaTotal('Papel Higiénico Check Hoja Simple 80 M X 10 Cm 4u'), { unidad: 'm', total: 320, hojas: 1 });
   assert.deepStrictEqual(medidaTotal('Papel Higiénico Check Doble Hoja 30 M X 10 Cm 6u'), { unidad: 'm', total: 180, hojas: 2 });
