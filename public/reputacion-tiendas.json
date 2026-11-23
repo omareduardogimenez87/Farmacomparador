@@ -1,1 +1,11 @@
-[]
+[
+{"nombre":"Farmacia La Esquina","url":"https://farmacialaesquina.com.ar","grupo":"Farmacia, belleza y perfumes originales","rubro":"Farmacia y perfumería","puntaje":9,"motivo":"30 años de trayectoria. Envíos gratis en Santiago desde $60.000 y al resto del país desde $100.000."},
+{"nombre":"Farmacity","url":"https://www.farmacity.com","grupo":"Farmacia, belleza y perfumes originales","rubro":"Farmacia y perfumería","puntaje":7,"motivo":"Cadena nacional. Como el resto de las farmacias, resuelve entre el 28% y el 48% de los reclamos en tuQuejaSuma."},
+{"nombre":"Farmalife","url":"https://www.farmalife.com.ar","grupo":"Farmacia, belleza y perfumes originales","rubro":"Farmacia","puntaje":9,"motivo":"Puntaje asignado por Edu: excelente reputación."},
+{"nombre":"Farmaonline","url":"https://www.farmaonline.com","grupo":"Farmacia, belleza y perfumes originales","rubro":"Farmacia","puntaje":9,"motivo":"Puntaje asignado por Edu: excelente reputación."},
+{"nombre":"MásOnline","url":"https://www.masonline.com.ar","grupo":"Supermercados y bazar","rubro":"Supermercado","puntaje":9,"motivo":"Puntaje asignado por Edu: excelente reputación. Envía a domicilio y tiene retiro en tienda, confirmado por Edu."},
+{"nombre":"Vea","url":"https://www.vea.com.ar","grupo":"Supermercados y bazar","rubro":"Supermercado","puntaje":9,"motivo":"Puntaje asignado por Edu: excelente reputación."},
+{"nombre":"La Anónima","url":"https://www.laanonima.com.ar","grupo":"Supermercados y bazar","rubro":"Supermercado","puntaje":9,"motivo":"Puntaje asignado por Edu: excelente reputación."},
+{"nombre":"Las Mil Novedades","url":"https://lasmilnovedades.com","grupo":"Supermercados y bazar","rubro":"Bazar mayorista (mín. $80.000 online)","puntaje":9,"motivo":"Puntaje asignado por Edu: excelente reputación."},
+{"nombre":"ENA Sport","url":"https://www.enasport.com","grupo":"Indumentaria y calzado","rubro":"Deportivo multimarca","puntaje":9,"motivo":"Puntaje asignado por Edu: excelente reputación."}
+]
