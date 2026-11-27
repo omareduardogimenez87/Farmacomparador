@@ -8,7 +8,7 @@ App para el celular que busca un producto y muestra el precio en varias farmacia
 
 ## Tiendas incluidas
 
-12 tiendas, agrupadas por rubro. Se puede buscar en todas o en un solo rubro.
+13 tiendas, agrupadas por rubro. Se puede buscar en todas o en un solo rubro.
 
 | Rubro | Tiendas |
 | --- | --- |
@@ -16,7 +16,7 @@ App para el celular que busca un producto y muestra el precio en varias farmacia
 | Supermercados | MásOnline, Vea, La Anónima |
 | Deportes | ENA Sport |
 | Bazar y juguetería | Las Mil Novedades (precios mayoristas; compra online mínima de $80.000) |
-| Electro, tecnología y hogar | Easy, Electronorte, Maxtecno |
+| Electro, tecnología y hogar | Easy, Electronorte, Maxtecno, Import Cell Sgo (precio minorista; compra mínima de $50.000) |
 
 **No incluidas:** Frávega (su web rechaza las consultas automáticas, error 403), Megatone (su buscador no se pudo leer) y Pixis (su tienda usa un sistema propio que la app no puede leer).
 
@@ -27,6 +27,7 @@ Las tiendas se consultan por plataforma (`lib/plataformas.js`). Hay adaptadores 
 ## Cómo compara
 
 - Le hace la misma búsqueda a cada tienda al mismo tiempo.
+- **Ordena por lo que rinde**: si los productos dicen cuánto traen (litros, kilos o metros), la app calcula el precio por litro, por kilo o por metro y ordena de lo que más rinde a lo que menos. Cuenta los packs ("4 x 30 m" son 120 metros, "pack x 6 de 1,5 l" son 9 litros). Los rollos de cocina se comparan por **paño**, y también por unidad los pañales, toallitas, servilletas, saquitos, cápsulas y comprimidos. En papel higiénico y rollos de cocina, la hoja doble cuenta como el doble de rendimiento que la simple, y la triple como el triple (es una estimación). En rollos de cocina, "40 paños 3 u" se toma como 3 rollos de 40, y de 100 paños para arriba ("120 paños 3 u") se toma como el total del paquete. Los packs de más de 24 unidades no se multiplican, porque suelen ser la caja para comercios. Los productos que no dicen su medida van al final.
 - Si dos tiendas publican el **mismo código de barras (EAN)**, la app los junta en una sola tarjeta y marca el más barato. Es la única forma confiable de saber que es exactamente el mismo producto.
 - Lo que no se puede emparejar por código (por ejemplo, todo ENA Sport y La Anónima) aparece en una tarjeta propia.
 - Tocando la etiqueta de una tienda se ven solo sus productos.
@@ -55,6 +56,8 @@ La pestaña **Tiendas** muestra la confianza de cada tienda, del 1 al 10, con un
 - **Cámara**: se saca una foto del producto. Si se ve el código de barras, el celular lo lee al instante (Chrome en Android). Si no, la IA reconoce el producto en la foto.
 - **Asistente**: un chat con la IA de Claude que consulta las tiendas y responde, por escrito o en voz alta.
 - **Promos**: descuentos, reintegros y cuotas por día de la semana, con filtro por banco o tarjeta. Solo muestra las que valen en Santiago del Estero: oculta las que nombran otras provincias o ciudades sin incluir a Santiago, y las de bancos provinciales de otras provincias. Se leen de las páginas oficiales de La Anónima y Farmacity; para Vea y MásOnline hay un enlace a su página, porque sus promos se cargan de una forma que la app no puede leer. No usa IA y no tiene costo. No hay cupones: las tiendas no los publican en un lugar que se pueda leer.
+- **Mercado Libre como referencia**: en cada búsqueda hay un botón que abre la misma búsqueda en Mercado Libre, ordenada del precio más bajo al más alto. Además, cada producto tiene el enlace "Comparar este producto en Mercado Libre", que busca su tipo, marca y código de modelo (por ejemplo "taladro daewoo daid750bx"). Es solo para comparar. La app no lee sus precios porque Mercado Libre rechaza las consultas automáticas (error 403); su API oficial exige registrarse como desarrollador.
+- **Mi lista (carrito)**: el botón +🛒 de cada precio agrega el producto a una lista guardada en el celular, agrupada por tienda, con totales que cuentan las promos por cantidad. En MásOnline, Farmacity, Farmalife, Farmaonline y Easy, el botón "Pasar todo al carrito" abre la tienda con los productos ya cargados (enlace de carrito de VTEX). En Las Mil Novedades se agregan uno por uno con un toque (WooCommerce). En el resto, incluida Vea, se abre la página de cada producto. La app nunca entra a la cuenta del usuario ni paga.
 - **Logos** de cada tienda, descargados de su propio sitio y guardados en `public/logos/`.
 
 ## Activar la inteligencia artificial
