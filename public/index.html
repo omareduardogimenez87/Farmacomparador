@@ -78,6 +78,8 @@
     display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 0 0 12px; padding: 12px 14px;
     background: #fff159; color: #2d3277; border-radius: 12px; font-weight: 700; text-decoration: none;
   }
+  .comparar-ml { display: inline-block; margin-top: 8px; padding: 6px 10px; border-radius: 999px; font-size: .82rem; font-weight: 600;
+    background: #fff159; color: #2d3277; text-decoration: none; }
   .enlace-ml small { display: block; font-weight: 400; font-size: .78rem; }
   .rinde { display: block; margin-top: 4px; font-size: .82rem; font-weight: 600; color: var(--ahorro); }
   .oferta {
@@ -414,18 +416,40 @@
     if (conStock.length === 1 && promoMejor) {
       caja.append(crear('p', 'ahorro', `Llevando ${promoMejor.unidades} ahorrás ${pesos.format(mejor.precio - final(mejor))} por unidad.`));
     }
+    // Referencia: el mismo producto en Mercado Libre, del más barato al más caro.
+    const ml = crear('a', 'comparar-ml', 'Comparar este producto en Mercado Libre ↗');
+    ml.href = direccionMercadoLibre(busquedaDelProducto(grupo)); ml.target = '_blank'; ml.rel = 'noopener';
+    caja.append(ml);
     return caja;
   }
 
   // ---------- Mercado Libre como referencia ----------
   // Mercado Libre rechaza las consultas automáticas, así que no se leen sus precios:
   // se abre la misma búsqueda en su web, ordenada del precio más bajo al más alto.
+  function direccionMercadoLibre(texto) {
+    const ruta = String(texto).toLowerCase().normalize('NFD').replace(/\p{M}/gu, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+    return `https://listado.mercadolibre.com.ar/${encodeURIComponent(ruta)}_OrderId_PRICE_NoIndex_True`;
+  }
+  // Para comparar un producto puntual: marca y modelo, sin medidas sueltas ni signos.
+  function busquedaDelProducto(grupo) {
+    let texto = String(grupo.nombre || '').replace(/[|()[\]*]+/g, ' ').replace(/\bc\/u\b/gi, ' ');
+    const marca = String(grupo.marca || '').trim();
+    if (marca && !texto.toLowerCase().includes(marca.toLowerCase())) texto = `${marca} ${texto}`;
+    const palabras = texto.replace(/\s+/g, ' ').trim().split(' ');
+    // Códigos de modelo: mezclan letras y números (DAID750BX, G15, A54). Las medidas (750w, 13mm) no cuentan.
+    const esMedida = (p) => /^\d+([.,]\d+)?(w|v|mm|cm|m|ml|l|g|kg|gb|tb|mah|hz|mts?)$/i.test(p);
+    const modelos = palabras.filter((p) => /[a-z]/i.test(p) && /\d/.test(p) && p.length >= 3 && !esMedida(p));
+    if (modelos.length) {
+      const partes = [palabras[0], marca, ...modelos].filter(Boolean);
+      return [...new Set(partes.map((p) => p.toLowerCase()))].join(' ');
+    }
+    return palabras.slice(0, 8).join(' ');
+  }
   function mostrarMercadoLibre(consulta) {
     const enlace = $('mercadoLibre');
     const texto = String(consulta || '').trim();
     if (!texto || /^\d{8,14}$/.test(texto)) { enlace.hidden = true; return; }
-    const ruta = texto.toLowerCase().normalize('NFD').replace(/\p{M}/gu, '').replace(/[^a-z0-9ñ]+/g, '-').replace(/^-+|-+$/g, '');
-    enlace.href = `https://listado.mercadolibre.com.ar/${encodeURIComponent(ruta)}_OrderId_PRICE_NoIndex_True`;
+    enlace.href = direccionMercadoLibre(texto);
     const titulo = crear('span');
     titulo.append(`Ver "${texto}" en Mercado Libre`, crear('small', null, 'Como referencia de precios, del más barato al más caro. Mirá el envío y la reputación del vendedor.'));
     enlace.replaceChildren(titulo, crear('span', null, '↗'));
