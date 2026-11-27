@@ -74,6 +74,11 @@
   .cabecera img { width: 56px; height: 56px; object-fit: contain; border-radius: 8px; background: #fff; flex: none; }
   .cabecera h2 { font-size: 1rem; margin: 0; overflow-wrap: anywhere; }
   .cabecera small { color: var(--suave); }
+  .enlace-ml {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 0 0 12px; padding: 12px 14px;
+    background: #fff159; color: #2d3277; border-radius: 12px; font-weight: 700; text-decoration: none;
+  }
+  .enlace-ml small { display: block; font-weight: 400; font-size: .78rem; }
   .rinde { display: block; margin-top: 4px; font-size: .82rem; font-weight: 600; color: var(--ahorro); }
   .oferta {
     display: flex; align-items: center; justify-content: space-between; gap: 10px;
@@ -250,6 +255,7 @@
   <div id="rubros" class="sitios rubros" role="group" aria-label="Rubro donde buscar"></div>
   <div id="sitios" class="sitios"></div>
   <p id="ayuda" class="ayuda" hidden>Tocá una tienda para ver solo sus productos.</p>
+  <a id="mercadoLibre" class="enlace-ml" target="_blank" rel="noopener" hidden></a>
   <label id="filtro" class="filtro" hidden><input id="soloComparables" type="checkbox"> Mostrar solo productos que están en 2 o más tiendas</label>
   <div id="preguntas" class="preguntas" hidden></div>
   <div id="resultados"><p class="mensaje">Escribí un producto y te muestro el precio en cada tienda. Elegí un rubro para buscar más rápido.</p></div>
@@ -409,6 +415,21 @@
       caja.append(crear('p', 'ahorro', `Llevando ${promoMejor.unidades} ahorrás ${pesos.format(mejor.precio - final(mejor))} por unidad.`));
     }
     return caja;
+  }
+
+  // ---------- Mercado Libre como referencia ----------
+  // Mercado Libre rechaza las consultas automáticas, así que no se leen sus precios:
+  // se abre la misma búsqueda en su web, ordenada del precio más bajo al más alto.
+  function mostrarMercadoLibre(consulta) {
+    const enlace = $('mercadoLibre');
+    const texto = String(consulta || '').trim();
+    if (!texto || /^\d{8,14}$/.test(texto)) { enlace.hidden = true; return; }
+    const ruta = texto.toLowerCase().normalize('NFD').replace(/\p{M}/gu, '').replace(/[^a-z0-9ñ]+/g, '-').replace(/^-+|-+$/g, '');
+    enlace.href = `https://listado.mercadolibre.com.ar/${encodeURIComponent(ruta)}_OrderId_PRICE_NoIndex_True`;
+    const titulo = crear('span');
+    titulo.append(`Ver "${texto}" en Mercado Libre`, crear('small', null, 'Como referencia de precios, del más barato al más caro. Mirá el envío y la reputación del vendedor.'));
+    enlace.replaceChildren(titulo, crear('span', null, '↗'));
+    enlace.hidden = false;
   }
 
   // ---------- Mi lista (carrito propio de la app) ----------
@@ -637,6 +658,7 @@
       return boton;
     }), ...(vacias ? [crear('span', 'sin-resultados', `${vacias} ${vacias === 1 ? 'tienda' : 'tiendas'} sin resultados`)] : []));
     $('ayuda').hidden = ultimo.sitios.filter((s) => s.ok && s.cantidad > 0).length < 2;
+    mostrarMercadoLibre(ultimo.consulta);
 
     let grupos = ultimo.grupos;
     if (tiendaElegida) {
