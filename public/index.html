@@ -74,6 +74,8 @@
   .cabecera img { width: 56px; height: 56px; object-fit: contain; border-radius: 8px; background: #fff; flex: none; }
   .cabecera h2 { font-size: 1rem; margin: 0; overflow-wrap: anywhere; }
   .cabecera small { color: var(--suave); }
+  a.cabecera { color: inherit; text-decoration: none; }
+  .ver-tienda { display: block; margin-top: 4px; font-size: .82rem; font-weight: 600; color: var(--marca); }
   .enlace-ml {
     display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 0 0 12px; padding: 12px 14px;
     background: #fff159; color: #2d3277; border-radius: 12px; font-weight: 700; text-decoration: none;
@@ -342,7 +344,10 @@
 
   function tarjeta(grupo, nombres) {
     const caja = crear('article', 'producto');
-    const cabecera = crear('div', 'cabecera');
+    // Tocar la foto o el nombre abre el producto en la tienda más barata que lo tiene.
+    const destino = grupo.ofertas.find((o) => o.stock) || grupo.ofertas[0];
+    const cabecera = crear('a', 'cabecera');
+    if (destino) { cabecera.href = destino.url; cabecera.target = '_blank'; cabecera.rel = 'noopener'; }
     if (grupo.imagen && grupo.imagen.startsWith('https://')) {
       const foto = crear('img');
       foto.src = grupo.imagen; foto.alt = ''; foto.loading = 'lazy';
@@ -352,6 +357,7 @@
     const titulos = crear('div');
     titulos.append(crear('h2', null, grupo.nombre));
     if (grupo.marca) titulos.append(crear('small', null, grupo.marca));
+    if (destino) titulos.append(crear('span', 'ver-tienda', `Ver en ${nombres[destino.sitio] || destino.sitio} ›`));
     if (grupo.precioPorMedida) {
       const u = grupo.medida.unidad;
       const nombres = { l: 'litro', kg: 'kilo', m: 'metro' };
